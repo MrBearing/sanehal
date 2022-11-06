@@ -1,0 +1,4 @@
+台車部分コントロール用のパッケージ
+
+
+ビルドにはDynamixelSDKとdynamixel-workbenchが必要です。

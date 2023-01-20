@@ -15,7 +15,8 @@ class SanehalVehicle : public rclcpp::Node
       bool result = false;
 
       dynamixel_workbench_ = new DynamixelWorkbench;
-      result = dynamixel_workbench_->init("/dev/dxhub", 57600, &log);
+      // result = dynamixel_workbench_->init("/dev/dxhub", 57600, &log);
+      result = dynamixel_workbench_->init("/dev/ttyUSB0", 57600, &log);
       if (result == false )
       {
         RCLCPP_ERROR(this->get_logger(),
@@ -56,7 +57,7 @@ class SanehalVehicle : public rclcpp::Node
         10,
         [this](geometry_msgs::msg::Twist::UniquePtr cmd_vel){
           //const char* log_lamda = NULL;
-          //RCLCPP_INFO(this->get_logger(),"I heard: '%s'", msg->data.c_str());
+          RCLCPP_INFO(this->get_logger(),"I heard: '%f", cmd_vel->linear.x);
           // TODO ２輪移動台車の回転速度計算を実装 ros2_controlで実装する方針
 
           

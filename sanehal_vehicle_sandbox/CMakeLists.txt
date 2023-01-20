@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(sanehal_vehicle)
+project(sanehal_vehicle_sandbox)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -22,15 +22,15 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(dynamixel_workbench_toolbox REQUIRED)
 
-add_executable(sanehal_vehicle src/sanehal_vehicle.cpp)
+add_executable(sanehal_vehicle_sandbox src/sanehal_vehicle.cpp)
 
-ament_target_dependencies(sanehal_vehicle rclcpp std_msgs dynamixel_workbench_toolbox geometry_msgs)
+ament_target_dependencies(sanehal_vehicle_sandbox rclcpp std_msgs dynamixel_workbench_toolbox geometry_msgs)
 
-target_include_directories(sanehal_vehicle PUBLIC
+target_include_directories(sanehal_vehicle_sandbox PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-install(TARGETS sanehal_vehicle
+install(TARGETS sanehal_vehicle_sandbox
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

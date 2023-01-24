@@ -21,7 +21,7 @@ ros2 launch sanehal_vehicle_description diffbot.launch.py
 
 ```
 ros2 topic pub --rate 30 /diffbot_base_controller/cmd_vel_unstamped geometry_msgs/msg/Twist "linear:
-    x: 0.7
+    x: 0.3
     y: 0.0
     z: 0.0
 angular:

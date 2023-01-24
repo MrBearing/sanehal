@@ -47,19 +47,21 @@ def generate_launch_description():
     )
 
     # for debug
-    # logger = LaunchConfiguration("log_level")
-    # launch_arg = DeclareLaunchArgument(
-    #         "log_level",
-    #         default_value=["debug"],
-    #         description="Logging level",
-    # )
+    logger = LaunchConfiguration("log_level")
+    launch_arg = DeclareLaunchArgument(
+            "log_level",
+            default_value=["debug"],
+            description="Logging level",
+    )
 
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_description, robot_controllers],
         output="both",
-        # arguments=['--ros-args', '--log-level', logger]
+        arguments=['--ros-args', 
+            # '--log-level', logger
+        ]
     )
     robot_state_pub_node = Node(
         package="robot_state_publisher",
@@ -75,7 +77,9 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="log",
-        arguments=["-d", rviz_config_file],
+        arguments=["-d", rviz_config_file,
+            # '--ros-args', '--log-level', logger
+        ],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -107,7 +111,7 @@ def generate_launch_description():
     )
 
     nodes = [
-        # launch_arg,
+        launch_arg,
         control_node,
         robot_state_pub_node,
         joint_state_broadcaster_spawner,

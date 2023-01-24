@@ -8,7 +8,7 @@
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <exec_depend>sanehal_vehicle</exec_depend>
+  <exec_depend>sanehal_vehicle_sandbox</exec_depend>
   <exec_depend>sanehal_vehicle_description</exec_depend>
   
   <export>

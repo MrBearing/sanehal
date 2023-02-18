@@ -31,7 +31,7 @@ angular:
 ```
 
 
-## run only 
+## run only
 
 ```
 ros2 topic pub --rate 30 /cmd_vel geometry_msgs/msg/Twist "linear:

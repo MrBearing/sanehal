@@ -8,8 +8,7 @@
         <plugin>dynamixel_hardware/DynamixelHardware</plugin>
         <param name="usb_port">/dev/ttyUSB0</param>
         <!-- you need to fix baud rate fitting with your dynamixel setting-->
-        <param name="baud_rate">1000000</param>        
-      
+        <param name="baud_rate">1000000</param>
       </hardware>
       <joint name="${prefix}left_wheel_joint">
         <param name="id">1</param> <!-- fix id with your dynamixel motors setting -->

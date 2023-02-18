@@ -1,8 +1,11 @@
+# sanehal_behicle_description
+
+このパッケージは[ros2_control_demos](https://github.com/ros-controls/ros2_control_demos)のdiffbotを改変して作成されました。
+
+## 概要
 台車部分コントロール用のパッケージ
 
 ビルドにはDynamixelSDKとdynamixel-workbench,そしてdynamixel-hardwareが必要です。
-
-
 ros2_controlを使用して実装します。
 
 

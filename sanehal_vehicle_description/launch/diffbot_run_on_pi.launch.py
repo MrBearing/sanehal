@@ -23,7 +23,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    # Get URDF via xacro
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),

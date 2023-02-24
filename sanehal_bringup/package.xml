@@ -5,7 +5,19 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="takumi1988okamoto@gmail.com">takumi</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache 2.0</license>
+
+  <depend>joint_state_publisher</depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>xacro</depend>
+  <depend>urdf</depend>
+  <depend>rviz2</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>dynamixel_hardware</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

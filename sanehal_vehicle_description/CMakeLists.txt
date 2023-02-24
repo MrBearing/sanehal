@@ -26,10 +26,10 @@ find_package(ros2_controllers REQUIRED)
 find_package(dynamixel_hardware REQUIRED)
 
 install(DIRECTORY
-  config
+  # config
   controllers
   gazebo
-  launch
+  # launch
   ros2_control
   urdf
 DESTINATION share/${PROJECT_NAME}

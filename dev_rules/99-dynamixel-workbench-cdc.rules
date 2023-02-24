@@ -4,5 +4,5 @@
 #sudo udevadm control --reload-rules
 #sudo udevadm trigger
 
-KERNEL=="ttyUSB*", DRIVERS=="ftdi_sio", MODE="0666", ATTR{device/latency_timer}="1" SYMLINK+="dxhub"
-
+# KERNEL=="ttyUSB*", DRIVERS=="ftdi_sio", MODE="0666", ATTR{device/latency_timer}="1" SYMLINK+="dxhub"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="E148", MODE="0666", ATTR{device/latency_timer}="1" SYMLINK+="dxhub"

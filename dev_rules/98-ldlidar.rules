@@ -1,9 +1,0 @@
-#http://linux-tips.org/t/prevent-modem-manager-to-capture-usb-serial-devices/284/2.
-
-#cp rules /etc/udev/rules.d/
-#sudo udevadm control --reload-rules
-#sudo udevadm trigger
-
-# set the udev rule , make the device_port be fixed by ldlidar
-# CP210x USB Device
-KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0777", SYMLINK+="ldlidar"

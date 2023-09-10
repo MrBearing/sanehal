@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/humble/include/**",
+        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_example/include/**",
+        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_interface/include/**",
+        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_node/include/**",
+        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_test/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

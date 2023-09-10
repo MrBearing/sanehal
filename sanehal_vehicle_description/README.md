@@ -47,3 +47,25 @@ angular:
     z: 1.0"
 
 ```
+
+
+## 構造
+
+```
+flowchart LR
+    main[diffbot.urdf.xacro]
+    system(diffbot_system.urdf.xacro)
+    description(diffbot_description.urdf.xacro)
+    materials(diffbot.materials.xacro)
+    ros2_control(diffbot.ros2_control.xacro)
+    gazebo(gazeobo/diffbot.gazebo.xacro)
+    gazebo_materials(gazebo/diffbot.materials.xacro)
+
+    main---ros2_control
+    main---description
+    main---materials
+    
+    system---main
+    system---gazebo_materials
+    system---gazebo
+```

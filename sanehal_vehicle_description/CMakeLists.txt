@@ -18,26 +18,6 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-# find dependencies
-# find_package(ament_cmake REQUIRED)
-# find_package(robot_state_publisher REQUIRED)
-# find_package(xacro REQUIRED)
-# find_package(urdf REQUIRED)
-# find_package(rviz2 REQUIRED)
-# find_package(ros2_control REQUIRED)
-# find_package(ros2_controllers REQUIRED)
-# find_package(dynamixel_hardware REQUIRED)
-
-# install(DIRECTORY
-#   # config
-#   controllers
-#   gazebo
-#   # launch
-#   ros2_control
-#   urdf
-# DESTINATION share/${PROJECT_NAME}
-# )
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)

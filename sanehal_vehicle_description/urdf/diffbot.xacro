@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <!-- ロボットの表示を行う本体部分 -->
-    <xacro:macro name="diffbot" params="prefix parent">
+    <xacro:macro name="diffbot" params="prefix parent *origin">
     <!-- Constants for robot dimensions -->
     <xacro:property name="PI" value="3.1415926535897931"/>
     <xacro:property name="base_mass" value="2.0" /> <!-- arbitrary value for base mass -->
@@ -22,7 +22,7 @@
 
 
     <!-- Base Link -->
-    <link name="${prefix}base_link">
+    <link name="${prefix}sanehal_base_link">
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -50,7 +50,7 @@
 
     <!-- Lidar sensor-->
     <xacro:ld19
-      parent="${prefix}base_link"
+      parent="${prefix}sanehal_base_link"
       prefix="${prefix}"
       sensor_range_visible="false">
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -138,10 +138,17 @@
     </link>
 
     <!-- joints -->
+
     <joint
+        name="${prefix}base_joint"
+        type="fixed">
+      <parent link="${parent}" />
+      <child link="${prefix}sanehal_base_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
 
     <joint name="${prefix}left_wheel_joint" type="continuous">
-      <parent link="${prefix}base_link"/>
+      <parent link="${prefix}sanehal_base_link"/>
       <child link="${prefix}left_wheel"/>
       <origin xyz="${wheel_x_offset} ${base_width/2} ${z_offset}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
@@ -149,7 +156,7 @@
     </joint>
 
     <joint name="${prefix}right_wheel_joint" type="continuous">
-      <parent link="${prefix}base_link"/>
+      <parent link="${prefix}sanehal_base_link"/>
       <child link="${prefix}right_wheel"/>
       <origin xyz="${wheel_x_offset} -${base_width/2} ${z_offset}" rpy="0 0 ${PI}"/>
       <axis xyz="0 1 0"/>
@@ -157,7 +164,7 @@
     </joint>
 
     <joint name="${prefix}caster_rear_wheel_joint" type="fixed">
-      <parent link="${prefix}base_link"/>
+      <parent link="${prefix}sanehal_base_link"/>
       <child link="${prefix}caster_rear_wheel"/>
       <origin xyz="${-base_width/2 + caster_wheel_radius} 0 ${z_offset}" rpy="0 0 0"/>
     </joint>

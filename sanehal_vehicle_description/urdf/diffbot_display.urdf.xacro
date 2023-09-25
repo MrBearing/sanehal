@@ -2,14 +2,10 @@
 <!-- Basic differential drive mobile base -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffdrive_robot">
   <xacro:arg name="prefix" default="" />
-
-  <xacro:include filename="$(find sanehal_vehicle_description)/urdf/diffbot.xacro" />
-
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find sanehal_vehicle_description)/gazebo/diffbot.materials.xacro" />
 
-  <!-- Import diffbot ros2_control description -->
-  <xacro:include filename="$(find sanehal_vehicle_description)/ros2_control/diffbot.ros2_control.xacro" />
+  <xacro:include filename="$(find sanehal_vehicle_description)/urdf/diffbot.xacro" />
 
   <link name="$(arg prefix)base_link" />
   <xacro:diffbot
@@ -19,7 +15,5 @@
         xyz="0 0 0"
         rpy="0 0 0" />
   </xacro:diffbot>
-  <xacro:diffbot_ros2_control
-    name="Sanehal" prefix="$(arg prefix)" />
 
 </robot>

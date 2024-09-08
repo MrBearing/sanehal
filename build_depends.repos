@@ -2,7 +2,7 @@ repositories:
   dynamixel-hardware:
     type: git
     url: https://github.com/dynamixel-community/dynamixel_hardware
-    version: humble
+    version: jazzy
   dynamixel-workbench:
     type: git
     url: https://github.com/ROBOTIS-GIT/dynamixel-workbench.git
@@ -13,7 +13,7 @@ repositories:
     version: ros2
   ldlidar_stl_ros2:
     type: git
-    url: https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+    url: https://github.com/MrBearing/ldlidar_stl_ros2.git
     version: master
   ldlidar_stl_utils:
     type: git

@@ -6,11 +6,11 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/opt/ros/humble/include/**",
-        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_example/include/**",
-        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_interface/include/**",
-        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_node/include/**",
-        "/home/takumi/ws_humble/src/PlayStation-JoyInterface-ROS2/p9n_test/include/**",
+        "/opt/ros/jazzy/include/**",
+        "/home/takumi/ws_jazzy/src/PlayStation-JoyInterface-ROS2/p9n_example/include/**",
+        "/home/takumi/ws_jazzy/src/PlayStation-JoyInterface-ROS2/p9n_interface/include/**",
+        "/home/takumi/ws_jazzy/src/PlayStation-JoyInterface-ROS2/p9n_node/include/**",
+        "/home/takumi/ws_jazzy/src/PlayStation-JoyInterface-ROS2/p9n_test/include/**",
         "/usr/include/**"
       ],
       "name": "ROS",

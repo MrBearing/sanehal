@@ -16,7 +16,7 @@ cd sanehal/
 git switch issue_apply_ros2_control # 任意
 vcs import src < src/sanehal/sanehal.repos
 rosdep install -i --from-paths src
-sudo apt install -y ros-humble-xacro　#ros-depで入らなかった場合の対応
+sudo apt install -y ros-jazzy-xacro　#ros-depで入らなかった場合の対応
 colcon build --symlink-install
 ```
 

@@ -11,6 +11,9 @@
     ],
     "ros.distro": "jazzy",
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+        "editor.defaultFormatter": "ms-python.black-formatter",
+    },
+    "black-formatter.args": [
+        "\"skip-string-normalization\""
+    ]
 }

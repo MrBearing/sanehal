@@ -11,9 +11,9 @@ jobs:
   ci:
     runs-on: ${{ matrix.os }}
     if: |
-      ((github.event.action == 'labeled') && (github.event.label.name == 'TESTING') && (github.base_ref == 'main' )) ||
-      ((github.event.action == 'synchronize') && (github.base_ref == 'main') && contains(github.event.pull_request.labels.*.name, 'TESTING')) ||
-      (github.ref_name == 'main')
+      ((github.event.action == 'labeled') && (github.event.label.name == 'TESTING') && (github.base_ref == 'jazzy' )) ||
+      ((github.event.action == 'synchronize') && (github.base_ref == 'jazzy') && contains(github.event.pull_request.labels.*.name, 'TESTING')) ||
+      (github.ref_name == 'jazzy')
     container:
       image: osrf/ros:${{ matrix.ros_distribution }}-desktop
     timeout-minutes: 20
@@ -32,8 +32,8 @@ jobs:
         with:
           target-ros2-distro: ${{ matrix.ros_distribution }}
           import-token: ${{ secrets.GITHUB_TOKEN }}
+          vcs-repo-file-url: build_depends.repos
           package-name: |
             sanehal
             sanehal_bringup
-            sanehal_description
-          vcs-repo-file-url: build_depends.repos
+            sanehal_vehicle_description

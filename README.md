@@ -1,5 +1,7 @@
 # Project SANEHAL
 
+[![ci_jazzy](https://github.com/MrBearing/sanehal/actions/workflows/ci_jazzy.yaml/badge.svg)](https://github.com/MrBearing/sanehal/actions/workflows/ci_jazzy.yaml)
+
 ## 事前準備
 
 - ROSのインストール

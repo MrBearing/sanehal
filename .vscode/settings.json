@@ -9,5 +9,8 @@
         "/opt/ros/jazzy/lib/python3.10/site-packages",
         "/opt/ros/jazzy/local/lib/python3.10/dist-packages"
     ],
-    "ros.distro": "jazzy"
+    "ros.distro": "jazzy",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }

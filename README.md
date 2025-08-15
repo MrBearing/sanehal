@@ -4,22 +4,33 @@
 
 ## 事前準備
 
-- ROSのインストール
-- Dynamixelのrulesファイル追加とデバイス再起動
-- ldlidarのrulesファイル追加とデバイス再起動
+### ワークスペース作成とリポジトリのクローン
 
-
-## ビルド方法
 ```bash
 mkdir -p ws_sanehal/src
 cd ws_sanehal/src
 git clone git@github.com:MrBearing/sanehal.git
 cd sanehal/
-git switch issue_apply_ros2_control # 任意
-vcs import src < src/sanehal/sanehal.repos
-rosdep install -i --from-paths src
-sudo apt install -y ros-jazzy-xacro　#ros-depで入らなかった場合の対応
-colcon build --symlink-install
+./setup.bash
+```
+### ROSのインストール
+
+[ここを](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#install-ros-2)参照
+
+### ldlidarとDynamixelのrulesファイル追加とデバイス再起動
+
+```bash
+# src/sanehal下で
+cp dev_rules/*.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+[参考](http://linux-tips.org/t/prevent-modem-manager-to-capture-usb-serial-devices/284/2)
+
+## ビルド方法
+```bash
+colcon build
 ```
 
 ## 動作確認

@@ -1,0 +1,40 @@
+name: ci_lyrical
+
+on:
+  push:
+    branches:
+      - "lyrical"
+      - "lyrical_dev"
+  pull_request:
+    types: [opened, synchronize, labeled]
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    if: |
+      ((github.event.action == 'labeled') && (github.event.label.name == 'TESTING') && (github.base_ref == 'lyrical' )) ||
+      ((github.event.action == 'synchronize') && (github.base_ref == 'lyrical') && contains(github.event.pull_request.labels.*.name, 'TESTING')) ||
+      (github.ref_name == 'lyrical') || (github.ref_name == 'lyrical_dev')
+    container:
+      image: osrf/ros:${{ matrix.ros_distribution }}-desktop
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        ros_distribution: [lyrical]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distribution }}
+      - name: Build and Test
+        uses: ros-tooling/action-ros-ci@v0.4
+        with:
+          target-ros2-distro: ${{ matrix.ros_distribution }}
+          import-token: ${{ secrets.GITHUB_TOKEN }}
+          vcs-repo-file-url: build_depends.repos
+          package-name: |
+            sanehal
+            sanehal_bringup
+            sanehal_vehicle_description

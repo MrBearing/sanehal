@@ -54,15 +54,15 @@ def generate_launch_description():
         parameters=[robot_description, robot_controllers],
         output='both',
         # arguments=['--ros-args', '--log-level', logger]
+        remappings=[
+            ('/diffbot_base_controller/cmd_vel', '/cmd_vel'),
+        ],
     )
     robot_state_pub_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='both',
         parameters=[robot_description],
-        remappings=[
-            ('/diff_drive_controller/cmd_vel_unstamped', '/cmd_vel'),
-        ],
     )
 
     joint_state_broadcaster_spawner = Node(

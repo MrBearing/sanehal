@@ -1,6 +1,7 @@
 # Project SANEHAL
 
 [![ci_jazzy](https://github.com/MrBearing/sanehal/actions/workflows/ci_jazzy.yaml/badge.svg)](https://github.com/MrBearing/sanehal/actions/workflows/ci_jazzy.yaml)
+[![ci_lyrical](https://github.com/MrBearing/sanehal/actions/workflows/ci_lyrical.yaml/badge.svg)](https://github.com/MrBearing/sanehal/actions/workflows/ci_lyrical.yaml)
 
 ## 事前準備
 

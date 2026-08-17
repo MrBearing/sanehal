@@ -3,17 +3,17 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffdrive_robot">
   <xacro:arg name="prefix" default="" />
   <!-- Import Rviz colors -->
-  <xacro:include filename="$(find sanehal_vehicle_description)/gazebo/diffbot.materials.xacro" />
+  <xacro:include filename="$(find sanehal_vehicle_description)/gazebo/sanehal.materials.xacro" />
 
-  <xacro:include filename="$(find sanehal_vehicle_description)/urdf/diffbot.xacro" />
+  <xacro:include filename="$(find sanehal_vehicle_description)/urdf/sanehal.xacro" />
 
   <link name="$(arg prefix)base_link" />
-  <xacro:diffbot
+  <xacro:sanehal
       prefix="$(arg prefix)"
       parent="$(arg prefix)base_link">
     <origin
         xyz="0 0 0"
         rpy="0 0 0" />
-  </xacro:diffbot>
+  </xacro:sanehal>
 
 </robot>

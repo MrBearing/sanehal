@@ -13,18 +13,20 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, Node, RegisterEventHandler
+
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import (
     Command,
     FindExecutable,
+    LaunchConfiguration,
     PathJoinSubstitution,
 )
-from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    # Get URDF via xacro
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name='xacro')]),
@@ -33,7 +35,7 @@ def generate_launch_description():
                 [
                     FindPackageShare('sanehal_vehicle_description'),
                     'urdf',
-                    'diffbot.urdf.xacro'
+                    'sanehal.urdf.xacro',
                 ]
             ),
         ]
@@ -44,8 +46,19 @@ def generate_launch_description():
         [
             FindPackageShare('sanehal_vehicle_description'),
             'controllers',
-            'diffbot_controllers.yaml',
+            'sanehal_controllers.yaml',
         ]
+    )
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare('sanehal_vehicle_description'), 'config', 'sanehal.rviz']
+    )
+
+    # for debug
+    logger = LaunchConfiguration('log_level')
+    launch_arg = DeclareLaunchArgument(
+        'log_level',
+        default_value=['debug'],
+        description='Logging level',
     )
 
     control_node = Node(
@@ -53,7 +66,10 @@ def generate_launch_description():
         executable='ros2_control_node',
         parameters=[robot_description, robot_controllers],
         output='both',
-        # arguments=['--ros-args', '--log-level', logger]
+        arguments=[
+            '--ros-args',
+            '--log-level', logger
+        ],
     )
     robot_state_pub_node = Node(
         package='robot_state_publisher',
@@ -64,6 +80,17 @@ def generate_launch_description():
             ('/diff_drive_controller/cmd_vel_unstamped', '/cmd_vel'),
         ],
     )
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='log',
+        arguments=[
+            '-d',
+            rviz_config_file,
+            # '--ros-args', '--log-level', logger
+        ],
+    )
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
@@ -71,30 +98,41 @@ def generate_launch_description():
         arguments=[
             'joint_state_broadcaster',
             '--controller-manager',
-            '/controller_manager'
+            '/controller_manager',
         ],
     )
 
     robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['diffbot_base_controller', '-c', '/controller_manager'],
+        arguments=['sanehal_base_controller', '-c', '/controller_manager'],
+    )
+
+    # Delay rviz start after `joint_state_broadcaster`
+    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[rviz_node],
+        )
     )
 
     # Delay start of robot_controller after `joint_state_broadcaster`
-    delay_robot_controller_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[robot_controller_spawner],
+    delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = (
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[robot_controller_spawner],
+            )
         )
     )
 
     nodes = [
-        # launch_arg,
+        launch_arg,
         control_node,
         robot_state_pub_node,
         joint_state_broadcaster_spawner,
-        delay_robot_controller_spawner,
+        delay_rviz_after_joint_state_broadcaster_spawner,
+        delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
     ]
 
     return LaunchDescription(nodes)

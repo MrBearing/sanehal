@@ -8,7 +8,7 @@ def generate_launch_description():
     sanehal_bringup = FindPackageShare('sanehal_bringup')
 
     vehicle = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([sanehal_bringup, '/launch', '/diffbot_on_pi.launch.py'])
+        PythonLaunchDescriptionSource([sanehal_bringup, '/launch', '/sanehal_on_pi.launch.py'])
     )
     lidar = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([sanehal_bringup, '/launch', '/ld19.launch.py'])

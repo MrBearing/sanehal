@@ -2,6 +2,9 @@
 <!-- Basic differential drive mobile base -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffdrive_robot">
   <xacro:arg name="prefix" default="" />
+  <xacro:arg name="jt16_link_name" default="lidar_link" />
+  <xacro:arg name="jt16_xyz" default="0 0 0" />
+  <xacro:arg name="jt16_rpy" default="0 0 0" />
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find sanehal_vehicle_description)/gazebo/sanehal.materials.xacro" />
 
@@ -10,6 +13,9 @@
   <link name="$(arg prefix)base_link" />
   <xacro:sanehal
       prefix="$(arg prefix)"
+      jt16_link_name="$(arg jt16_link_name)"
+      jt16_xyz="$(arg jt16_xyz)"
+      jt16_rpy="$(arg jt16_rpy)"
       parent="$(arg prefix)base_link">
     <origin
         xyz="0 0 0"

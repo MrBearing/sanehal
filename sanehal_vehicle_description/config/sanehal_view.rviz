@@ -76,7 +76,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        ld19_base_link:
+        lidar_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false

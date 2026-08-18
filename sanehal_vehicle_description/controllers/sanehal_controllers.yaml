@@ -13,10 +13,13 @@ sanehal_base_controller:
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]
 
-    wheel_separation: 0.2
-    #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
-    wheel_radius: 0.0395 # = 0.079/2
+    # Nominal SANEHAL-2 geometry from sanehal.xacro.  Effective odometry
+    # values must be calibrated on the assembled robot (Issue #25).
+    wheel_separation: 0.2  # 2 * wheel_y_offset (wheel center distance)
+    wheel_radius: 0.0395   # nominal 0.079 m wheel diameter
 
+    # Keep calibration neutral here.  Motor direction is not a geometry
+    # correction and is handled by the ros2_control transmission matrix.
     wheel_separation_multiplier: 1.0
     left_wheel_radius_multiplier: 1.0
     # Motor mounting direction is handled by the ros2_control transmission matrix.
@@ -28,7 +31,9 @@ sanehal_base_controller:
     pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-    open_loop: true
+    # Use wheel position feedback exposed by dynamixel_hardware_interface for
+    # odometry.  open_loop=true would integrate commanded velocity instead.
+    open_loop: false
     enable_odom_tf: true
 
     cmd_vel_timeout: 0.5

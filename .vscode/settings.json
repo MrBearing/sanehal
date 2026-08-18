@@ -15,5 +15,6 @@
     },
     "black-formatter.args": [
         "\"skip-string-normalization\""
-    ]
+    ],
+    "ROS2.distro": "jazzy"
 }

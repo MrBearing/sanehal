@@ -1,5 +1,18 @@
 # sanehal_behicle_description
 
+## SANEHAL-2 JT16 frame
+
+JT16のframeは `sanehal_base_link` からfixed joint `jt16_joint` で接続する
+`hesai_lidar` です。Issue #30ではHesai driverの `ros.ros_frame_id` を
+同じ値にしてください。TFは `robot_state_publisher` が配信するため、driverの
+launchから同じstatic TFを重複配信しないでください。
+
+SANEHAL-2で実測した取付TFは `xyz="-0.080 0 0.250"` [m]、`rpy="0 0 0"`
+[rad] です。`hesai_lidar` の物理基準はJT16底面中心で、コネクタ面は機体後方を向きます。
+
+visual/collisionは実測外形 `0.075 x 0.075 x 0.064` [m] の簡略boxです。
+link原点が底面中心のため、box中心はz方向へ `0.032` [m] offsetしています。
+
 このパッケージは[ros2_control_demos](https://github.com/ros-controls/ros2_control_demos)のdiffbotを改変して作成されました。
 
 ## 概要

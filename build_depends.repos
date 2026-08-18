@@ -6,7 +6,7 @@ repositories:
   dynamixel-workbench:
     type: git
     url: https://github.com/ROBOTIS-GIT/dynamixel-workbench.git
-    version: ros2
+    version: jazzy
   dynamixel-workbench-msgs:
     type: git
     url: https://github.com/ROBOTIS-GIT/dynamixel-workbench-msgs.git
@@ -19,3 +19,7 @@ repositories:
     type: git
     url: https://github.com/MrBearing/ldlidar_stl_utils.git
     version: humble
+  hesai_lidar_ros2:
+    type: git
+    url: https://github.com/HesaiTechnology/HesaiLidar_ROS_2.0.git
+    version: v2.0.12

@@ -184,7 +184,8 @@
     <joint name="${prefix}right_wheel_joint" type="continuous">
       <parent link="${prefix}sanehal_base_link"/>
       <child link="${prefix}right_wheel"/>
-      <origin xyz="${wheel_x_offset} -${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 ${PI}"/>
+      <!-- Keep positive joint rotation aligned with the left wheel (+Y in base frame). -->
+      <origin xyz="${wheel_x_offset} -${wheel_y_offset} ${wheel_z_offset}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <dynamics damping="0.2"/>
     </joint>

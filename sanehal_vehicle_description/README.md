@@ -18,8 +18,13 @@ link原点が底面中心のため、box中心はz方向へ `0.032` [m] offset�
 ## 概要
 台車部分コントロール用のパッケージ
 
-ビルドにはDynamixelSDKとdynamixel-workbench,そしてdynamixel-hardwareが必要です。
+ビルドにはROBOTIS公式のDynamixelSDK、dynamixel_hardware_interface、
+dynamixel_interfacesが必要です。`build_depends.repos`から取得できます。
 ros2_controlを使用して実装します。
+
+左右車輪はDynamixel ID 1、2、baud rate 1 Mbps、velocity modeで構成します。
+実機のmodelは起動時にmodel numberから自動検出されます。右モータの反転は
+controllerの車輪半径ではなくros2_controlのtransmission matrixで扱います。
 
 
 ## 実行方法

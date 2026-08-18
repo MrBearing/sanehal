@@ -1,16 +1,16 @@
 repositories:
-  dynamixel-hardware:
+  DynamixelSDK:
     type: git
-    url: https://github.com/dynamixel-community/dynamixel_hardware
+    url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git
     version: jazzy
-  dynamixel-workbench:
+  dynamixel_hardware_interface:
     type: git
-    url: https://github.com/ROBOTIS-GIT/dynamixel-workbench.git
+    url: https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
     version: jazzy
-  dynamixel-workbench-msgs:
+  dynamixel_interfaces:
     type: git
-    url: https://github.com/ROBOTIS-GIT/dynamixel-workbench-msgs.git
-    version: ros2
+    url: https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git
+    version: jazzy
   ldlidar_stl_ros2:
     type: git
     url: https://github.com/MrBearing/ldlidar_stl_ros2.git

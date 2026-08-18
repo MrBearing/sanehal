@@ -5,26 +5,48 @@
 
     <ros2_control name="${name}" type="system">
       <hardware>
-        <plugin>dynamixel_hardware/DynamixelHardware</plugin>
-        <!-- <param name="usb_port">/dev/ttyUSB0</param> -->
-        <param name="usb_port">/dev/dxhub</param>
-        <!-- you need to fix baud rate fitting with your dynamixel setting-->
+        <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+        <param name="port_name">/dev/dxhub</param>
         <param name="baud_rate">1000000</param>
+        <param name="error_timeout_ms">500</param>
+        <!-- Appended to the dynamixel_hardware_interface package share path. -->
+        <param name="dynamixel_model_folder">/param/dxl_model</param>
+        <param name="number_of_joints">2</param>
+        <param name="number_of_transmissions">2</param>
+        <param name="disable_torque_at_init">true</param>
+        <!-- The right motor is mounted in the opposite shaft direction. -->
+        <param name="transmission_to_joint_matrix">1, 0, 0, -1</param>
+        <param name="joint_to_transmission_matrix">1, 0, 0, -1</param>
       </hardware>
       <joint name="${prefix}left_wheel_joint">
-        <param name="id">1</param> <!-- fix id with your dynamixel motors setting -->
         <command_interface name="velocity"/>
-        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
       <joint name="${prefix}right_wheel_joint">
-        <param name="id">2</param><!-- fix id with your dynamixel motors setting -->
         <command_interface name="velocity"/>
-        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
+
+      <gpio name="left_wheel_dxl">
+        <param name="type">dxl</param>
+        <param name="ID">1</param>
+        <command_interface name="Goal Velocity"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <param name="Operating Mode">1</param>
+        <param name="Return Delay Time">0</param>
+      </gpio>
+      <gpio name="right_wheel_dxl">
+        <param name="type">dxl</param>
+        <param name="ID">2</param>
+        <command_interface name="Goal Velocity"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <param name="Operating Mode">1</param>
+        <param name="Return Delay Time">0</param>
+      </gpio>
     </ros2_control>
 
   </xacro:macro>

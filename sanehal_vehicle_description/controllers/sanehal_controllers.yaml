@@ -19,7 +19,8 @@ sanehal_base_controller:
 
     wheel_separation_multiplier: 1.0
     left_wheel_radius_multiplier: 1.0
-    right_wheel_radius_multiplier: -1.0 # needed!!
+    # Motor mounting direction is handled by the ros2_control transmission matrix.
+    right_wheel_radius_multiplier: 1.0
 
     publish_rate: 50.0
     odom_frame_id: odom

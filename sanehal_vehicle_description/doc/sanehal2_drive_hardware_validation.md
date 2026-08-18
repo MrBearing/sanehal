@@ -105,11 +105,11 @@ from step 13. First run with wheels raised; repeat on the floor only after step
     with `z: -0.30`.
 
 19. **Wheel direction** — Viewed in the robot base frame, positive linear x
-must rotate both wheels toward forward travel. A positive angular z command
-must drive the right wheel forward and the left wheel backward. Confirm that
-   the signs in `/joint_states` follow each joint axis in the URDF. If a side is
-   reversed, inspect the motor mounting and the sign entries in both
-transmission matrices; do not use a negative wheel-radius multiplier.
+    must rotate both wheels toward forward travel. A positive angular z command
+    must drive the right wheel forward and the left wheel backward. Confirm that
+    the signs in `/joint_states` follow each joint axis in the URDF. If a side is
+    reversed, inspect the motor mounting and the sign entries in both
+    transmission matrices; do not use a negative wheel-radius multiplier.
 
 ## Odometry, errors, and calibration
 

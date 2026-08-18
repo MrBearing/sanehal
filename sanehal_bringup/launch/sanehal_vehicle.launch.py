@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, Node, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import (
@@ -22,6 +22,8 @@ from launch.substitutions import (
     LaunchConfiguration,
     PathJoinSubstitution,
 )
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -40,7 +42,12 @@ def generate_launch_description():
             ),
         ]
     )
-    robot_description = {'robot_description': robot_description_content}
+    robot_description = {
+        'robot_description': ParameterValue(
+            robot_description_content,
+            value_type=str,
+        )
+    }
 
     robot_controllers = PathJoinSubstitution(
         [
@@ -76,9 +83,6 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='both',
         parameters=[robot_description],
-        remappings=[
-            ('/diff_drive_controller/cmd_vel_unstamped', '/cmd_vel'),
-        ],
     )
     rviz_node = Node(
         package='rviz2',

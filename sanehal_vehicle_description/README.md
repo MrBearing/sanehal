@@ -22,8 +22,8 @@ link原点が底面中心のため、box中心はz方向へ `0.032` [m] offset�
 dynamixel_interfacesが必要です。`build_depends.repos`から取得できます。
 ros2_controlを使用して実装します。
 
-左右車輪はDynamixel ID 1、2、baud rate 1 Mbps、velocity modeで構成します。
-実機のmodelは起動時にmodel numberから自動検出されます。右モータの反転は
+左車輪はDynamixel ID 2、右車輪はID 1、baud rate 1 Mbps、velocity modeで構成します。
+実機のmodelは起動時にmodel numberから自動検出されます。モータ取付方向の反転は
 controllerの車輪半径ではなくros2_controlのtransmission matrixで扱います。
 
 ## 駆動系寸法とodometry
@@ -40,8 +40,12 @@ SANEHAL-2のrobot descriptionに記録されている公称値は次の通りで
 左右駆動輪の接地点間距離を測定し、直進距離とその場旋回角によるcalibrationは
 Issue #25で行ってください。calibration前のmultiplierはすべて1.0です。
 
+Issue #25の実機試験は
+[`doc/sanehal2_drive_hardware_validation.md`](doc/sanehal2_drive_hardware_validation.md)
+の安全確認・24項目の順序に従ってください。
+
 OdometryはDynamixelの車輪位置feedbackを使用します（`open_loop: false`）。
-右モータの取付方向反転はhardware transmissionで吸収されるため、右車輪半径の
+モータの取付方向反転はhardware transmissionで吸収されるため、車輪半径の
 multiplierを符号反転に使用してはいけません。
 
 ## 実行方法
@@ -49,37 +53,25 @@ multiplierを符号反転に使用してはいけません。
 表示テスト
 
 ```bash
-ros2 launch sanehal_vehicle_bringup diffbot.launch.py
+ros2 launch sanehal_bringup sanehal_on_pi.launch.py
 ```
 
 
 ```
-ros2 launch sanehal_vehicle_description diffbot.launch.py
+ros2 control list_controllers
 ```
 
 ```
-ros2 topic pub --rate 30 /diffbot_base_controller/cmd_vel_unstamped geometry_msgs/msg/Twist "linear:
-    x: 0.3
-    y: 0.0
-    z: 0.0
-angular:
-    x: 0.0
-    y: 0.0
-    z: 1.0"
+timeout 2 ros2 topic pub --rate 10 /sanehal_base_controller/cmd_vel geometry_msgs/msg/TwistStamped \
+  "{twist: {linear: {x: 0.05}, angular: {z: 0.0}}}"
 ```
 
 
 ## run only
 
 ```
-ros2 topic pub --rate 30 /cmd_vel geometry_msgs/msg/Twist "linear:
-    x: 0.7
-    y: 0.0
-    z: 0.0
-angular:
-    x: 0.0
-    y: 0.0
-    z: 1.0"
+ros2 topic pub --once /sanehal_base_controller/cmd_vel geometry_msgs/msg/TwistStamped \
+  "{twist: {linear: {x: 0.0}, angular: {z: 0.0}}}"
 
 ```
 

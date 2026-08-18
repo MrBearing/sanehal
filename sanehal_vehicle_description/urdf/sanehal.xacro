@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <!-- ロボットの表示を行う本体部分 -->
-    <xacro:macro name="sanehal" params="prefix parent jt16_link_name:=lidar_link jt16_xyz:='0 0 0' jt16_rpy:='0 0 0' *origin">
+    <xacro:macro name="sanehal" params="prefix parent jt16_link_name:=hesai_lidar jt16_xyz:='0 0 0' jt16_rpy:='0 0 0' *origin">
     <!-- Constants for robot dimensions -->
     <xacro:property name="PI" value="3.1415926535897931"/>
     <xacro:property name="base_mass" value="2.0" /> <!-- arbitrary value for base mass -->
@@ -22,6 +22,9 @@
     <xacro:property name="caster_wheel_y_offset" value="0.0" />
     <xacro:property name="caster_wheel_z_offset" value="0.0124" />
     <xacro:property name="caster_wheel_radius" value="0.0124" />
+    <xacro:property name="jt16_length" value="0.075" />
+    <xacro:property name="jt16_width" value="0.075" />
+    <xacro:property name="jt16_height" value="0.064" />
 
 
     <!-- Base Link -->
@@ -51,10 +54,27 @@
         </inertial>
     </link>
 
-    <!-- JT16 sensor frame.
-         Geometry is intentionally omitted until a vendor mesh or measured size is provided.
-         The frame exists so Issue #30 can reuse the same TF frame_id. -->
-    <link name="${prefix}${jt16_link_name}" />
+    <!-- JT16 driver/optical frame.
+         The mounting transform is measured from sanehal_base_link to the
+         bottom-center datum, with the connector facing rearward.
+         Simplified geometry is centered half the enclosure height above this
+         bottom-center datum.
+         Issue #30 must set Hesai ros.ros_frame_id to this link name. -->
+    <link name="${prefix}${jt16_link_name}">
+      <visual>
+        <origin xyz="0 0 ${jt16_height / 2.0}" rpy="0 0 0" />
+        <geometry>
+          <box size="${jt16_length} ${jt16_width} ${jt16_height}" />
+        </geometry>
+        <material name="black" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${jt16_height / 2.0}" rpy="0 0 0" />
+        <geometry>
+          <box size="${jt16_length} ${jt16_width} ${jt16_height}" />
+        </geometry>
+      </collision>
+    </link>
 
     <joint name="${prefix}jt16_joint" type="fixed">
       <parent link="${prefix}sanehal_base_link" />

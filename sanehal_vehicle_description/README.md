@@ -26,6 +26,23 @@ ros2_controlを使用して実装します。
 実機のmodelは起動時にmodel numberから自動検出されます。右モータの反転は
 controllerの車輪半径ではなくros2_controlのtransmission matrixで扱います。
 
+## 駆動系寸法とodometry
+
+SANEHAL-2のrobot descriptionに記録されている公称値は次の通りです。
+
+- 車輪半径: 0.0395 m
+- 左右車輪中心のY座標: +0.100 m / -0.100 m
+- 左右車輪中心間距離: 0.200 m
+
+`controllers/sanehal_controllers.yaml` はこの公称値を初期値として使用します。
+ただし、タイヤの変形や荷重、床面、組立誤差のため、公称CAD寸法とodometryに
+適した実効車輪半径・実効トレッドは一致しない場合があります。実機の車輪外周と
+左右駆動輪の接地点間距離を測定し、直進距離とその場旋回角によるcalibrationは
+Issue #25で行ってください。calibration前のmultiplierはすべて1.0です。
+
+OdometryはDynamixelの車輪位置feedbackを使用します（`open_loop: false`）。
+右モータの取付方向反転はhardware transmissionで吸収されるため、右車輪半径の
+multiplierを符号反転に使用してはいけません。
 
 ## 実行方法
 

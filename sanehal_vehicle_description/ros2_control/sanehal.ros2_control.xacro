@@ -9,6 +9,7 @@
         <param name="port_name">/dev/dxhub</param>
         <param name="baud_rate">1000000</param>
         <param name="error_timeout_ms">500</param>
+        <!-- Appended to the dynamixel_hardware_interface package share path. -->
         <param name="dynamixel_model_folder">/param/dxl_model</param>
         <param name="number_of_joints">2</param>
         <param name="number_of_transmissions">2</param>

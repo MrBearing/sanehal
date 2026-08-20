@@ -58,6 +58,7 @@ def generate_launch_description():
                 [bringup_share, 'launch', 'sanehal_on_pi.launch.py']
             )
         ),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
         condition=IfCondition(start_robot_bringup),
     )
 

@@ -3,8 +3,8 @@ lidar:
       use_gpu: false
       source_type: 4
       serial_type:
-        rs485_com: /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_DDDOb114J19-if00-port0
-        rs232_com: /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0
+        rs485_com: /dev/jt16_rs485
+        rs232_com: /dev/jt16_rs232
         point_cloud_baudrate: 3125000
         correction_save_path: ""
         correction_file_path: ""

@@ -2,6 +2,17 @@
 
 ## JT16 2D SLAM
 
+Install the repository udev rules before starting the hardware. They create
+`/dev/jt16_rs485` for the point cloud stream, `/dev/jt16_rs232` for commands
+and angle calibration, and `/dev/dxhub` for the wheel motors:
+
+```bash
+sudo cp dev_rules/*.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+ls -l /dev/jt16_rs485 /dev/jt16_rs232 /dev/dxhub
+```
+
 `slam.launch.py` starts the SANEHAL-2 drive/TF stack, Jazzy
 `slam_toolbox` in online asynchronous mapping mode, and RViz. The JT16 driver
 and `pointcloud_to_laserscan` are supplied by Issues #30, #31, and #27; start

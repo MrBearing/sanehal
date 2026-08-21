@@ -1,0 +1,36 @@
+lidar:
+  - driver:
+      use_gpu: false
+      source_type: 4
+      serial_type:
+        rs485_com: /dev/jt16_rs485
+        rs232_com: /dev/jt16_rs232
+        point_cloud_baudrate: 3125000
+        correction_save_path: ""
+        correction_file_path: ""
+      use_timestamp_type: 1
+      frame_start_azimuth: 0
+      thread_num: 2
+      transform_flag: false
+      fov_start: -1
+      fov_end: -1
+      channel_fov_filter_path: ""
+      multi_fov_filter_ranges: ""
+      enable_packet_loss_tool: true
+      distance_correction_flag: false
+      xt_spot_correction: false
+      device_udp_src_port: 0
+      device_fault_port: 0
+      frame_frequency: 0
+      default_frame_frequency: 10.0
+      echo_mode_filter: 0
+    ros:
+      ros_frame_id: hesai_lidar
+      ros_recv_packet_topic: /lidar_packets
+      ros_send_packet_topic: /lidar_packets
+      ros_send_point_cloud_topic: /lidar_points
+      ros_send_imu_topic: /lidar_imu
+      ros_send_packet_loss_topic: /lidar_packets_loss
+      send_packet_ros: false
+      send_point_cloud_ros: true
+      send_imu_ros: false

@@ -37,6 +37,10 @@ hardware interface, controller, or additional robot-state publisher:
 ros2 launch sanehal_bringup sanehal_rviz.launch.py
 ```
 
+The display-only launch overrides the RViz fixed frame to `odom`, which is
+published by the Raspberry Pi vehicle stack. Use `fixed_frame:=map` when
+`slam_toolbox` is running and the `map -> odom` transform is available.
+
 The upstream v2.0.12 point-cloud publisher uses Reliable/Volatile QoS with a
 depth of 10. Its cloud header uses the frame start time. The checked-in config
 uses the host receive timestamp (`use_timestamp_type: 1`) until the JT16 clock

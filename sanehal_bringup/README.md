@@ -67,7 +67,7 @@ ros2 launch sanehal_bringup slam.launch.py
 ros2 launch sanehal_bringup pointcloud_to_laserscan.launch.py
 # Reuse an externally started robot, JT16 driver, and converter:
 ros2 launch sanehal_bringup slam.launch.py \
-  start_control:=false start_description:=false start_lidar:=false \
+  start_robot_bringup:=false start_lidar:=false \
   start_pointcloud_to_laserscan:=false
 ```
 

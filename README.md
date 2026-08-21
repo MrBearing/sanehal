@@ -46,5 +46,5 @@ colcon build
 . install/setup.bash
 ros2 launch sanehal_bringup jt16.launch.py       # JT16 driverのみ
 ros2 launch sanehal_bringup sanehal.launch.py    # Raspberry Pi上の駆動系 + JT16
-ros2 launch sanehal_bringup sanehal_vehicle.launch.py # 母艦PC上での表示
+ros2 launch sanehal_bringup sanehal_rviz.launch.py # 母艦PC上での表示のみ
 ```

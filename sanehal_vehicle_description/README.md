@@ -7,6 +7,11 @@ JT16のframeは `sanehal_base_link` からfixed joint `jt16_joint` で接続す�
 同じ値にしてください。TFは `robot_state_publisher` が配信するため、driverの
 launchから同じstatic TFを重複配信しないでください。
 
+走行中のTF所有者は、`sanehal_base_controller`が
+`odom -> base_footprint`、`robot_state_publisher`が
+`base_footprint -> base_link -> sanehal_base_link -> hesai_lidar`です。
+`slam_toolbox`だけが`map -> odom`を配信します。
+
 SANEHAL-2で実測した取付TFは `xyz="-0.080 0 0.250"` [m]、`rpy="0 0 0"`
 [rad] です。`hesai_lidar` の物理基準はJT16底面中心で、コネクタ面は機体後方を向きます。
 

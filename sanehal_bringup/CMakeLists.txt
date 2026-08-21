@@ -15,6 +15,7 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
   add_launch_test(test/test_pointcloud_to_laserscan.py TIMEOUT 30)
+  add_launch_test(test/test_robot_bringup.py TIMEOUT 45)
 endif()
 
 ament_auto_package(

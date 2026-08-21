@@ -10,10 +10,11 @@ slam_toolbox:
 
     # TF ownership:
     #   slam_toolbox: map -> odom
-    #   sanehal_base_controller: odom -> base_link
+    #   sanehal_base_controller: odom -> base_footprint
+    #   robot_state_publisher: base_footprint -> base_link -> sensor frames
     map_frame: map
     odom_frame: odom
-    base_frame: base_link
+    base_frame: base_footprint
     scan_topic: /scan
     mode: mapping
     use_map_saver: true

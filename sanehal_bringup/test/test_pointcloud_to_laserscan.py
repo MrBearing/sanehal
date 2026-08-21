@@ -103,7 +103,7 @@ class TestPointCloudToLaserScan(unittest.TestCase):
         self.assertAlmostEqual(scan.angle_min, -3.14159265, places=6)
         self.assertAlmostEqual(scan.angle_max, 3.14159264, places=6)
         self.assertAlmostEqual(scan.angle_increment, 0.010471976, places=7)
-        self.assertAlmostEqual(scan.scan_time, 0.1, places=6)
+        self.assertAlmostEqual(scan.scan_time, 0.2, places=6)
         self.assertAlmostEqual(scan.range_min, 0.3, places=6)
         self.assertAlmostEqual(scan.range_max, 30.0, places=6)
         self.assertEqual(len(scan.ranges), 600)

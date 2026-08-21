@@ -106,11 +106,18 @@ def generate_launch_description():
         condition=IfCondition(start_robot_bringup),
     )
 
-    lidar = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([bringup_share, 'launch', 'jt16.launch.py'])
-        ),
-        launch_arguments={'config_file': jt16_config_file}.items(),
+    lidar = GroupAction(
+        actions=[
+            SetRemap(src='/lidar_points', dst=pointcloud_topic),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    PathJoinSubstitution(
+                        [bringup_share, 'launch', 'jt16.launch.py']
+                    )
+                ),
+                launch_arguments={'config_file': jt16_config_file}.items(),
+            ),
+        ],
         condition=IfCondition(start_lidar),
     )
 

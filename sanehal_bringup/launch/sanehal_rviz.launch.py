@@ -15,7 +15,7 @@ def generate_launch_description():
     )
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare('sanehal_vehicle_description'), 'config', 'sanehal.rviz']
+        [FindPackageShare('sanehal_bringup'), 'config', 'slam_jt16.rviz']
     )
     rviz = Node(
         package='rviz2',

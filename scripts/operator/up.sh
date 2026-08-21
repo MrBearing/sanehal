@@ -9,13 +9,12 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-set -a
-source .env
-set +a
-
 compose_files=(-f compose.operator.yaml)
 
-if [ -n "${DISPLAY:-}" ]; then
+display_name=${DISPLAY:-$(sed -n 's/^DISPLAY=//p' .env | tail -n 1)}
+
+if [ -n "${display_name}" ]; then
+  export DISPLAY=${display_name}
   if ! command -v xauth >/dev/null 2>&1; then
     echo "xauth is required for RViz X11/XWayland access." >&2
     exit 1

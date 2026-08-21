@@ -1,0 +1,26 @@
+services:
+  operator:
+    image: sanehal-operator:jazzy
+    build:
+      context: .
+      dockerfile: docker/operator/Dockerfile
+      args:
+        ROS_IMAGE: ${ROS_IMAGE:-osrf/ros:jazzy-desktop@sha256:e1c05248ece3bc328386d0509a041a97a5de872a5606418118748875c539c66f}
+        USER_UID: ${HOST_UID:-1000}
+        USER_GID: ${HOST_GID:-1000}
+    network_mode: host
+    init: true
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:?Set ROS_DOMAIN_ID in .env}
+      RMW_IMPLEMENTATION: ${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+      ROS_AUTOMATIC_DISCOVERY_RANGE: ${ROS_AUTOMATIC_DISCOVERY_RANGE:-SUBNET}
+      ROS_STATIC_PEERS: ${ROS_STATIC_PEERS:-}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - operator-home:/home/operator
+
+volumes:
+  operator-home:

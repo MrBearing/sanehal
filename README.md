@@ -46,11 +46,20 @@ colcon build
 . install/setup.bash
 ros2 launch sanehal_bringup jt16.launch.py       # JT16 driverのみ
 ros2 launch sanehal_bringup sanehal.launch.py    # Raspberry Pi上のRobot + JT16 + 2D SLAM
-ros2 launch sanehal_bringup sanehal_rviz.launch.py # 母艦PC上での表示のみ
+ros2 launch sanehal_operator operator.launch.py  # Operator環境上での表示のみ
 ```
 
-Robot側の既定起動ではRVizを起動しません。RobotとOperator PCで同じ
-`ROS_DOMAIN_ID`を設定してください。実機なしのgraph/TF確認には次を使用できます。
+Robot bringupはRVizを起動しません。Ubuntu 26.04 Operator PCでは、ROS 2
+JazzyをUbuntu 24.04 container内で実行します。VS Codeを使わない通常起動は
+次の通りです。詳細は `sanehal_operator/README.md` を参照してください。
+
+```bash
+ROS_DOMAIN_ID=42 scripts/operator/configure.sh  # 配備ごとに値を選ぶ
+scripts/operator/up.sh
+```
+
+RobotとOperator PCで同じ`ROS_DOMAIN_ID`、`rmw_fastrtps_cpp`、discovery
+設定を使用してください。実機なしのgraph/TF確認には次を使用できます。
 
 ```bash
 ros2 launch sanehal_bringup sanehal.launch.py use_mock_hardware:=true \

@@ -1,0 +1,27 @@
+pointcloud_to_laserscan:
+  ros__parameters:
+    # Preserve the JT16 cloud frame and timestamp. slam_toolbox transforms the
+    # resulting scan from hesai_lidar to base_link at the scan timestamp.
+    target_frame: ""
+    transform_tolerance: 0.01
+    # Prefer dropping an old cloud to accumulating latency on the Raspberry Pi.
+    queue_size: 1
+
+    # Initial sensor-frame slice around the JT16 origin. Tune these on hardware
+    # so that walls remain dense while floor and robot-body returns are excluded.
+    min_height: -0.05
+    max_height: 0.05
+
+    # JT16 nominal horizontal field of view and resolution. Exclude the exact
+    # +pi endpoint so 600 bins cover one revolution without duplicating a ray.
+    angle_min: -3.14159265
+    angle_max: 3.14159264
+    angle_increment: 0.010471976
+
+    # The checked-in JT16 driver configuration defaults to 10 Hz. Set this to
+    # the reciprocal of the measured cloud rate if the unit runs at 5 Hz.
+    scan_time: 0.1
+    range_min: 0.3
+    range_max: 30.0
+    use_inf: true
+    inf_epsilon: 1.0

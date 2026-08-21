@@ -47,7 +47,8 @@ depth of 10. Its cloud header uses the frame start time. The checked-in config
 uses the host receive timestamp (`use_timestamp_type: 1`) until the JT16 clock
 has been synchronized and its device timestamp has been validated. The RS232
 port supplies commands and angle calibration; if it is unavailable, configure
-a valid `correction_file_path` instead of leaving it empty.
+a valid `correction_file_path` instead of leaving it empty, then launch with
+`require_jt16_rs232:=false`. The RS485 data port remains mandatory.
 
 `pointcloud_to_laserscan.launch.py` converts `/lidar_points` to `/scan` using
 `config/pointcloud_to_laserscan_jt16.yaml`. It preserves the cloud timestamp and
@@ -99,11 +100,13 @@ The main launch arguments and defaults are:
 | `start_rviz` | `false` | Local RViz; normally false on the Raspberry Pi |
 | `wait_for_devices` | `true` | Check serial device access before node startup |
 | `device_wait_timeout` | `10.0` | Device wait timeout in seconds |
+| `require_jt16_rs232` | `true` | Require the JT16 command port; disable only with a correction file |
 | `dynamixel_port` / `dynamixel_baud_rate` | `/dev/dxhub` / `1000000` | ROBOTIS hardware connection |
 | `pointcloud_topic` / `scan_topic` | `/lidar_points` / `/scan` | Sensor contracts |
 
 `jt16_rs485_device` and `jt16_rs232_device` are preflight paths and must match
-the paths in the selected `jt16_config_file`.
+the paths in the selected `jt16_config_file`. The standalone `jt16.launch.py`
+uses the equivalent `require_rs232` argument.
 
 ## Robot/Operator interface contract
 

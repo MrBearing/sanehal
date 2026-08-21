@@ -19,6 +19,7 @@ def generate_launch_description():
         'dynamixel_baud_rate', 'controllers_file', 'jt16_config_file',
         'converter_params_file', 'slam_params_file', 'rviz_config_file',
         'pointcloud_topic', 'scan_topic', 'jt16_rs485_device', 'jt16_rs232_device',
+        'require_jt16_rs232',
     ]
     cfg = {name: LaunchConfiguration(name) for name in names}
 
@@ -72,6 +73,13 @@ def generate_launch_description():
         DeclareLaunchArgument('scan_topic', default_value='/scan'),
         DeclareLaunchArgument('jt16_rs485_device', default_value='/dev/jt16_rs485'),
         DeclareLaunchArgument('jt16_rs232_device', default_value='/dev/jt16_rs232'),
+        DeclareLaunchArgument(
+            'require_jt16_rs232', default_value='true',
+            description=(
+                'Require the JT16 RS232 port during preflight. Set false only '
+                'when jt16_config_file supplies a correction_file_path.'
+            ),
+        ),
     ]
 
     vehicle = IncludeLaunchDescription(
@@ -105,6 +113,7 @@ def generate_launch_description():
                     'device_wait_timeout': cfg['device_wait_timeout'],
                     'rs485_device': cfg['jt16_rs485_device'],
                     'rs232_device': cfg['jt16_rs232_device'],
+                    'require_rs232': cfg['require_jt16_rs232'],
                 }.items(),
             ),
         ],

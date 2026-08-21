@@ -17,10 +17,11 @@ def generate_launch_description():
             '1', 'true', 'yes', 'on'
         ):
             return []
-        devices = [
-            LaunchConfiguration('rs485_device').perform(context),
-            LaunchConfiguration('rs232_device').perform(context),
-        ]
+        devices = [LaunchConfiguration('rs485_device').perform(context)]
+        if LaunchConfiguration('require_rs232').perform(context).lower() in (
+            '1', 'true', 'yes', 'on'
+        ):
+            devices.append(LaunchConfiguration('rs232_device').perform(context))
         timeout = float(LaunchConfiguration('device_wait_timeout').perform(context))
         deadline = time.monotonic() + timeout
         while time.monotonic() <= deadline:
@@ -50,6 +51,13 @@ def generate_launch_description():
         DeclareLaunchArgument('device_wait_timeout', default_value='10.0'),
         DeclareLaunchArgument('rs485_device', default_value='/dev/jt16_rs485'),
         DeclareLaunchArgument('rs232_device', default_value='/dev/jt16_rs232'),
+        DeclareLaunchArgument(
+            'require_rs232', default_value='true',
+            description=(
+                'Require the JT16 command port during preflight. Set false only '
+                'when the driver config supplies a correction_file_path.'
+            ),
+        ),
     ]
 
     jt16_driver = Node(

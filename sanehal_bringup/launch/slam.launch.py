@@ -49,9 +49,9 @@ def generate_launch_description():
         ),
     ]
 
-    # Issue #27/#30/#31 own the JT16 driver and PointCloud2-to-LaserScan
-    # bringup. This launch consumes their /scan output and deliberately does
-    # not start the legacy LD19 path.
+    # Issue #27/#31 own the combined JT16 and PointCloud2-to-LaserScan
+    # bringup. This launch currently consumes their /scan output without
+    # starting the sensor path itself.
     robot_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(

@@ -21,6 +21,12 @@ jobs:
       - uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: ${{ matrix.ros_distribution }}
+      # HesaiLidar_ROS_2.0 v2.0.12 uses these libraries but does not declare
+      # them in its package.xml, so rosdep cannot install them for the driver.
+      - name: Install Hesai driver system dependencies
+        run: |
+          apt-get update
+          apt-get install -y libboost-all-dev libyaml-cpp-dev
       - name: Build and Test
         uses: ros-tooling/action-ros-ci@v0.3
         with:

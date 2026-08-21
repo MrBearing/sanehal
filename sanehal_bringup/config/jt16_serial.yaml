@@ -3,11 +3,16 @@ lidar:
       use_gpu: false
       source_type: 4
       serial_type:
+        # JT16 point cloud input and command/calibration ports. The symlinks
+        # are created by dev_rules/99-jt16.rules.
         rs485_com: /dev/jt16_rs485
         rs232_com: /dev/jt16_rs232
         point_cloud_baudrate: 3125000
+        # A correction file is required when the RS232 port is not available.
         correction_save_path: ""
         correction_file_path: ""
+      # Use the host receive time until the JT16 clock is synchronized and
+      # device timestamps have been validated on the robot (0=device, 1=host).
       use_timestamp_type: 1
       frame_start_azimuth: 0
       thread_num: 2
@@ -33,4 +38,6 @@ lidar:
       ros_send_packet_loss_topic: /lidar_packets_loss
       send_packet_ros: false
       send_point_cloud_ros: true
+      # Enable only after confirming that the JT16 unit supplies valid IMU
+      # data, timestamps, and units through this driver version.
       send_imu_ros: false

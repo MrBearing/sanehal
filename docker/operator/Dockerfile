@@ -28,7 +28,9 @@ COPY sanehal_operator src/sanehal_operator
 RUN source /opt/ros/jazzy/setup.bash \
     && colcon build --merge-install --packages-select sanehal_operator \
     && rm -rf build log \
-    && chown -R "${USER_UID}:${USER_GID}" /opt/sanehal_operator_ws
+    && chown -R "${USER_UID}:${USER_GID}" /opt/sanehal_operator_ws \
+    && mkdir -p /workspaces/sanehal/build /workspaces/sanehal/install /workspaces/sanehal/log \
+    && chown -R "${USER_UID}:${USER_GID}" /workspaces
 
 COPY docker/operator/entrypoint.sh /usr/local/bin/sanehal-operator-entrypoint
 RUN chmod 0755 /usr/local/bin/sanehal-operator-entrypoint

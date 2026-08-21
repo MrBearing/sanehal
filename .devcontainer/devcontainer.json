@@ -3,6 +3,7 @@
   "dockerComposeFile": [
     "../compose.operator.yaml",
     "../compose.operator.x11.yaml",
+    "../compose.operator.software-rendering.yaml",
     "compose.devcontainer.yaml"
   ],
   "service": "operator",

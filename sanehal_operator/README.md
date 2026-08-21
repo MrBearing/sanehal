@@ -58,16 +58,21 @@ scripts/operator/up.sh
 RViz on Jazzy uses OGRE/GLX, so `up.sh` uses X11 on an Xorg session and XWayland
 on a Wayland session. It creates a private Xauthority file containing only the
 current display cookie; it never runs `xhost +` and does not expose the Wayland
-runtime directory. To diagnose a GPU driver problem, add
-`-f compose.operator.software-rendering.yaml` to a manual Compose invocation.
+runtime directory. `up.sh` adds `compose.operator.gpu.yaml` only when `/dev/dri`
+exists, otherwise it selects Mesa software rendering. For manual startup, add
+exactly one of `compose.operator.gpu.yaml` or
+`compose.operator.software-rendering.yaml` after the X11 override.
 
 Normal operation does not require VS Code. For development, run
 `scripts/operator/configure.sh` first, then open the repository with
 **Dev Containers: Reopen in Container**. The Dev Container uses the current
 authenticated X11/XWayland display so the same environment can launch RViz.
 `.devcontainer/devcontainer.json` attaches to the same `operator` service and
-Dockerfile, adding only the display override, source mount, build volumes, and
-an idle development command. Install host package `xauth` if it is absent.
+Dockerfile, adding the display override, portable software rendering, source
+mount, build volumes, and an idle development command. The image seeds the
+named build/install/log volumes with the Operator UID/GID. Install host package
+`xauth` if it is absent. Developers can replace the software override with the
+GPU override when hardware acceleration is required.
 
 The base image is pinned by digest in the Dockerfile, Compose default, and
 `.env.example`. To update it, resolve the new `osrf/ros:jazzy-desktop` digest,

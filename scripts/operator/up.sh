@@ -25,6 +25,12 @@ if [ -n "${display_name}" ]; then
   xauth nlist "${DISPLAY}" | sed -e 's/^..../ffff/' | \
     xauth -f .docker/run/xauthority nmerge -
   compose_files+=(-f compose.operator.x11.yaml)
+  if [ -d /dev/dri ]; then
+    compose_files+=(-f compose.operator.gpu.yaml)
+  else
+    echo "No /dev/dri found; using Mesa software rendering."
+    compose_files+=(-f compose.operator.software-rendering.yaml)
+  fi
 else
   echo "DISPLAY is not set. RViz requires X11 or XWayland for OGRE/GLX." >&2
   exit 1

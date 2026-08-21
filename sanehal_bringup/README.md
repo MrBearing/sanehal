@@ -48,16 +48,32 @@ has been synchronized and its device timestamp has been validated. The RS232
 port supplies commands and angle calibration; if it is unavailable, configure
 a valid `correction_file_path` instead of leaving it empty.
 
-`slam.launch.py` starts the SANEHAL-2 drive/TF stack, Jazzy `slam_toolbox` in
-online asynchronous mapping mode, and RViz. PointCloud2-to-LaserScan conversion
-is owned by Issue #31, so start that conversion path separately until Issue #27
-integrates it. It must consume `/lidar_points` and publish `/scan` while
-preserving the `hesai_lidar` frame and cloud timestamp.
+`pointcloud_to_laserscan.launch.py` converts `/lidar_points` to `/scan` using
+`config/pointcloud_to_laserscan_jt16.yaml`. It preserves the cloud timestamp and
+`hesai_lidar` frame. The converter subscribes to the cloud only while `/scan`
+has a subscriber, so use `ros2 topic echo`, RViz, or `slam_toolbox` when testing
+it by itself.
+
+`slam.launch.py` starts the SANEHAL-2 drive/TF stack, JT16 driver,
+PointCloud2-to-LaserScan converter, Jazzy `slam_toolbox` in online asynchronous
+mapping mode, and RViz. Disable components that are already running to avoid
+duplicate publishers:
 
 ```bash
 . install/setup.bash
 ros2 launch sanehal_bringup slam.launch.py
+# Converter only:
+ros2 launch sanehal_bringup pointcloud_to_laserscan.launch.py
+# Reuse an externally started robot, JT16 driver, and converter:
+ros2 launch sanehal_bringup slam.launch.py \
+  start_robot_bringup:=false start_lidar:=false \
+  start_pointcloud_to_laserscan:=false
 ```
+
+The Robot-side bringup interface passed to Issue #27 is `start_lidar`,
+`start_pointcloud_to_laserscan`, `jt16_config_file`, `converter_params_file`,
+`pointcloud_topic`, `scan_topic`, and `use_sim_time`. The topic arguments are
+implemented as remaps; their defaults are `/lidar_points` and `/scan`.
 
 Inspect the raw JT16 contract before starting the converter:
 
@@ -103,9 +119,11 @@ ros2 run tf2_ros tf2_echo map odom
 ros2 topic echo /map --once
 ```
 
-JT16 projects a 3D cloud into one planar scan. In Issue #31, initially use
-`range_min: 0.3` m and `range_max: 30.0` m (the JT16 manual specifies a 0.15 m
-minimum instrumented range and 30 m capability at 10% reflectivity). Jazzy
+JT16 projects a 3D cloud into one planar scan. The initial sensor-frame height
+slice is `[-0.05, 0.05]` m, and the initial limits are `range_min: 0.3` m and
+`range_max: 30.0` m (the JT16 manual specifies a shorter minimum instrumented
+range and 30 m capability at 10% reflectivity). The 360-degree output uses the
+nominal 0.6-degree JT16 horizontal resolution. Jazzy
 slam_toolbox 2.8.4 does not declare the old `min_laser_range` and
 `max_laser_range` parameters still shown in its example YAML, so the effective
 limits must come from the generated `LaserScan.range_min`/`range_max`. Select
@@ -113,6 +131,28 @@ the height band so floor, ceiling, and the robot body are excluded; preserve
 the cloud timestamp; and verify that the scan's `hesai_lidar` frame has a TF at
 that timestamp. Empty or sparse height slices and delayed timestamps commonly
 look like SLAM or TF failures.
+
+The configured `scan_time: 0.1` is metadata for the nominal 10 Hz cloud rate;
+it does not throttle conversion. Change it to `0.2` if hardware measurement
+shows 5 Hz. Missing angular bins are published as `+inf`, `time_increment` is
+zero, and the converter does not populate LaserScan intensities. Keep
+`queue_size: 1` initially to avoid accumulating stale point clouds. On the
+Raspberry Pi and over Wi-Fi, display the raw PointCloud2 only while debugging;
+its serialization and transport can materially increase CPU and bandwidth.
+
+For offline tuning, record only the required high-bandwidth and TF topics:
+
+```bash
+ros2 bag record -o jt16_issue31 /lidar_points /tf /tf_static \
+  /sanehal_base_controller/odom
+ros2 bag play jt16_issue31 --clock
+ros2 launch sanehal_bringup pointcloud_to_laserscan.launch.py use_sim_time:=true
+```
+
+Compare the cloud and scan rates, header stamps and frames, finite/`+inf` bin
+counts, minimum/maximum finite ranges, and CPU load. Tune the height slice
+first, then range limits. Widen `queue_size` only if drops are unacceptable and
+processing latency remains bounded.
 
 Save the occupancy map for Nav2 after mapping:
 

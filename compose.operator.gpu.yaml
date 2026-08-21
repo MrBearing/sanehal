@@ -1,0 +1,7 @@
+services:
+  operator:
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - ${VIDEO_GID:?VIDEO_GID is required}
+      - ${RENDER_GID:?RENDER_GID is required}

@@ -1,0 +1,14 @@
+services:
+  operator:
+    command: sleep infinity
+    working_dir: /workspaces/sanehal
+    volumes:
+      - .:/workspaces/sanehal:cached
+      - operator-build:/workspaces/sanehal/build
+      - operator-install:/workspaces/sanehal/install
+      - operator-log:/workspaces/sanehal/log
+
+volumes:
+  operator-build:
+  operator-install:
+  operator-log:

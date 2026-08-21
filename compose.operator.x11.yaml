@@ -1,0 +1,16 @@
+services:
+  operator:
+    environment:
+      DISPLAY: ${DISPLAY:?DISPLAY is required}
+      QT_QPA_PLATFORM: xcb
+      XAUTHORITY: /run/sanehal/xauthority
+      XDG_RUNTIME_DIR: /tmp/runtime-operator
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+        read_only: true
+      - type: bind
+        source: ./.docker/run/xauthority
+        target: /run/sanehal/xauthority
+        read_only: true

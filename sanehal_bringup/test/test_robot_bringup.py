@@ -27,7 +27,6 @@ def generate_test_description():
             'start_lidar': 'false',
             'start_pointcloud_to_laserscan': 'false',
             'start_slam': 'false',
-            'start_rviz': 'false',
         }.items(),
     )
     return LaunchDescription([bringup, launch_testing.actions.ReadyToTest()])

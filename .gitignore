@@ -1,0 +1,7 @@
+.env
+.docker/run/
+build/
+install/
+log/
+__pycache__/
+*.pyc

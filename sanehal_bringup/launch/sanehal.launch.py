@@ -3,7 +3,7 @@ from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDesc
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.actions import Node, SetRemap
+from launch_ros.actions import SetRemap
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -14,10 +14,10 @@ def generate_launch_description():
 
     names = [
         'use_sim_time', 'use_mock_hardware', 'start_description', 'start_control',
-        'start_lidar', 'start_pointcloud_to_laserscan', 'start_slam', 'start_rviz',
+        'start_lidar', 'start_pointcloud_to_laserscan', 'start_slam',
         'wait_for_devices', 'device_wait_timeout', 'dynamixel_port',
         'dynamixel_baud_rate', 'controllers_file', 'jt16_config_file',
-        'converter_params_file', 'slam_params_file', 'rviz_config_file',
+        'converter_params_file', 'slam_params_file',
         'pointcloud_topic', 'scan_topic', 'jt16_rs485_device', 'jt16_rs232_device',
         'require_jt16_rs232',
     ]
@@ -31,10 +31,6 @@ def generate_launch_description():
         DeclareLaunchArgument('start_lidar', default_value='true'),
         DeclareLaunchArgument('start_pointcloud_to_laserscan', default_value='true'),
         DeclareLaunchArgument('start_slam', default_value='true'),
-        DeclareLaunchArgument(
-            'start_rviz', default_value='false',
-            description='Start RViz locally. Keep false on the Raspberry Pi.',
-        ),
         DeclareLaunchArgument('wait_for_devices', default_value='true'),
         DeclareLaunchArgument('device_wait_timeout', default_value='10.0'),
         DeclareLaunchArgument('dynamixel_port', default_value='/dev/dxhub'),
@@ -61,12 +57,6 @@ def generate_launch_description():
             'slam_params_file',
             default_value=PathJoinSubstitution([
                 bringup_share, 'config', 'slam_toolbox_jt16.yaml',
-            ]),
-        ),
-        DeclareLaunchArgument(
-            'rviz_config_file',
-            default_value=PathJoinSubstitution([
-                bringup_share, 'config', 'slam_jt16.rviz',
             ]),
         ),
         DeclareLaunchArgument('pointcloud_topic', default_value='/lidar_points'),
@@ -150,15 +140,4 @@ def generate_launch_description():
         condition=IfCondition(cfg['start_slam']),
     )
 
-    rviz = Node(
-        package='rviz2', executable='rviz2', name='rviz2', output='screen',
-        arguments=['-d', cfg['rviz_config_file']],
-        parameters=[{'use_sim_time': cfg['use_sim_time']}],
-        remappings=[
-            ('/lidar_points', cfg['pointcloud_topic']),
-            ('/scan', cfg['scan_topic']),
-        ],
-        condition=IfCondition(cfg['start_rviz']),
-    )
-
-    return LaunchDescription(arguments + [vehicle, lidar, converter, slam, rviz])
+    return LaunchDescription(arguments + [vehicle, lidar, converter, slam])

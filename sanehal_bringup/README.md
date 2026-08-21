@@ -30,17 +30,17 @@ ros2 launch sanehal_bringup jt16.launch.py
 ros2 launch sanehal_bringup sanehal.launch.py
 ```
 
-On a workstation, start only RViz and consume the robot description, TF, and
-sensor topics published by the Raspberry Pi. This launch does not start a
-hardware interface, controller, or additional robot-state publisher:
+On an Operator workstation, use the separate `sanehal_operator` package. It
+starts only RViz and consumes the description, TF, and sensor topics published
+by the Raspberry Pi. It does not start a hardware interface, controller, or
+additional robot-state publisher:
 
 ```bash
-ros2 launch sanehal_bringup sanehal_rviz.launch.py
+ros2 launch sanehal_operator operator.launch.py
 ```
 
-The display-only launch overrides the RViz fixed frame to `odom`, which is
-published by the Raspberry Pi vehicle stack. Use `fixed_frame:=map` when
-`slam_toolbox` is running and the `map -> odom` transform is available.
+The display-only launch defaults to `map`. Use `fixed_frame:=odom` only when
+`slam_toolbox` is intentionally disabled and `map -> odom` is unavailable.
 
 The upstream v2.0.12 point-cloud publisher uses Reliable/Volatile QoS with a
 depth of 10. Its cloud header uses the frame start time. The checked-in config
@@ -72,9 +72,10 @@ ros2 launch sanehal_bringup slam.launch.py \
 ```
 
 The Robot-side component switches are `start_description`, `start_control`,
-`start_lidar`, `start_pointcloud_to_laserscan`, `start_slam`, and `start_rviz`.
-RViz defaults to false on the Robot. Config paths and `/lidar_points`/`/scan`
-topic names are launch arguments. `use_mock_hardware:=true` selects the
+`start_lidar`, `start_pointcloud_to_laserscan`, and `start_slam`.
+RViz belongs to `sanehal_operator` and never runs from Robot bringup. Config
+paths and `/lidar_points`/`/scan` topic names are launch arguments.
+`use_mock_hardware:=true` selects the
 ros2_control GenericSystem only for hardware-free tests; production always uses
 ROBOTIS `dynamixel_hardware_interface`.
 
@@ -97,7 +98,6 @@ The main launch arguments and defaults are:
 | `start_description` / `start_control` | `true` | Robot model/TF and drive stack |
 | `start_lidar` / `start_pointcloud_to_laserscan` | `true` | JT16 cloud and 2D scan |
 | `start_slam` | `true` | Online asynchronous `slam_toolbox` |
-| `start_rviz` | `false` | Local RViz; normally false on the Raspberry Pi |
 | `wait_for_devices` | `true` | Check serial device access before node startup |
 | `device_wait_timeout` | `10.0` | Device wait timeout in seconds |
 | `require_jt16_rs232` | `true` | Require the JT16 command port; disable only with a correction file |

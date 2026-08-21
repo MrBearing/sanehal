@@ -1,0 +1,6 @@
+.git
+.docker/run
+.env
+build
+install
+log

@@ -161,6 +161,10 @@ def generate_launch_description():
         output='screen',
         arguments=['-d', rviz_config_file],
         parameters=[{'use_sim_time': use_sim_time}],
+        remappings=[
+            ('/lidar_points', pointcloud_topic),
+            ('/scan', scan_topic),
+        ],
         condition=IfCondition(start_rviz),
     )
 

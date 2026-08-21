@@ -12,7 +12,13 @@
 
   <xacro:include filename="$(find sanehal_vehicle_description)/urdf/sanehal.xacro" />
 
+  <link name="$(arg prefix)base_footprint" />
   <link name="$(arg prefix)base_link" />
+  <joint name="$(arg prefix)base_footprint_joint" type="fixed">
+    <parent link="$(arg prefix)base_footprint" />
+    <child link="$(arg prefix)base_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
   <xacro:sanehal
       prefix="$(arg prefix)"
       jt16_link_name="$(arg jt16_link_name)"

@@ -27,7 +27,9 @@ sanehal_base_controller:
 
     publish_rate: 50.0
     odom_frame_id: odom
-    base_frame_id: base_link
+    # diff_drive_controller is the sole owner of odom -> base_footprint.
+    # robot_state_publisher owns base_footprint -> base_link and all child TFs.
+    base_frame_id: base_footprint
     pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 

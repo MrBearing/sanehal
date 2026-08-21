@@ -17,15 +17,16 @@ ls -l /dev/jt16_rs485 /dev/jt16_rs232 /dev/dxhub
 Log out and back in after adding the user to `dialout`.
 
 `jt16.launch.py` starts the official Hesai ROS 2 driver with
-`config/jt16_serial.yaml`. `sanehal.launch.py` starts both the drive/TF stack
-and the JT16 driver; pass `start_lidar:=false` when the driver is already
-running. The driver publishes `sensor_msgs/msg/PointCloud2` on
+`config/jt16_serial.yaml`. `sanehal.launch.py` is the Robot-side entry point and
+starts drive/TF, JT16, PointCloud2-to-LaserScan, and `slam_toolbox`; pass
+`start_lidar:=false` when the driver is already running. The driver publishes
+`sensor_msgs/msg/PointCloud2` on
 `/lidar_points` with `frame_id: hesai_lidar`.
 
 ```bash
 . install/setup.bash
 ros2 launch sanehal_bringup jt16.launch.py
-# Or start the robot and JT16 together on the Raspberry Pi:
+# Start the complete Robot-side stack on the Raspberry Pi (RViz stays off):
 ros2 launch sanehal_bringup sanehal.launch.py
 ```
 
@@ -46,7 +47,8 @@ depth of 10. Its cloud header uses the frame start time. The checked-in config
 uses the host receive timestamp (`use_timestamp_type: 1`) until the JT16 clock
 has been synchronized and its device timestamp has been validated. The RS232
 port supplies commands and angle calibration; if it is unavailable, configure
-a valid `correction_file_path` instead of leaving it empty.
+a valid `correction_file_path` instead of leaving it empty, then launch with
+`require_jt16_rs232:=false`. The RS485 data port remains mandatory.
 
 `pointcloud_to_laserscan.launch.py` converts `/lidar_points` to `/scan` using
 `config/pointcloud_to_laserscan_jt16.yaml`. It preserves the cloud timestamp and
@@ -54,9 +56,8 @@ a valid `correction_file_path` instead of leaving it empty.
 has a subscriber, so use `ros2 topic echo`, RViz, or `slam_toolbox` when testing
 it by itself.
 
-`slam.launch.py` starts the SANEHAL-2 drive/TF stack, JT16 driver,
-PointCloud2-to-LaserScan converter, Jazzy `slam_toolbox` in online asynchronous
-mapping mode, and RViz. Disable components that are already running to avoid
+`slam.launch.py` is retained as a compatibility wrapper for the integrated
+`sanehal.launch.py`. Disable components that are already running to avoid
 duplicate publishers:
 
 ```bash
@@ -70,10 +71,56 @@ ros2 launch sanehal_bringup slam.launch.py \
   start_pointcloud_to_laserscan:=false
 ```
 
-The Robot-side bringup interface passed to Issue #27 is `start_lidar`,
-`start_pointcloud_to_laserscan`, `jt16_config_file`, `converter_params_file`,
-`pointcloud_topic`, `scan_topic`, and `use_sim_time`. The topic arguments are
-implemented as remaps; their defaults are `/lidar_points` and `/scan`.
+The Robot-side component switches are `start_description`, `start_control`,
+`start_lidar`, `start_pointcloud_to_laserscan`, `start_slam`, and `start_rviz`.
+RViz defaults to false on the Robot. Config paths and `/lidar_points`/`/scan`
+topic names are launch arguments. `use_mock_hardware:=true` selects the
+ros2_control GenericSystem only for hardware-free tests; production always uses
+ROBOTIS `dynamixel_hardware_interface`.
+
+For drive/TF diagnostics without serial devices:
+
+```bash
+ros2 launch sanehal_bringup sanehal.launch.py use_mock_hardware:=true \
+  start_lidar:=false start_pointcloud_to_laserscan:=false start_slam:=false
+```
+
+For description and static TF only, also pass `start_control:=false`. Device
+checks wait up to `device_wait_timeout` seconds and can be bypassed for an
+intentional external-data workflow with `wait_for_devices:=false`.
+
+The main launch arguments and defaults are:
+
+| Argument | Default | Purpose |
+| --- | --- | --- |
+| `use_mock_hardware` | `false` | Select GenericSystem for hardware-free tests |
+| `start_description` / `start_control` | `true` | Robot model/TF and drive stack |
+| `start_lidar` / `start_pointcloud_to_laserscan` | `true` | JT16 cloud and 2D scan |
+| `start_slam` | `true` | Online asynchronous `slam_toolbox` |
+| `start_rviz` | `false` | Local RViz; normally false on the Raspberry Pi |
+| `wait_for_devices` | `true` | Check serial device access before node startup |
+| `device_wait_timeout` | `10.0` | Device wait timeout in seconds |
+| `require_jt16_rs232` | `true` | Require the JT16 command port; disable only with a correction file |
+| `dynamixel_port` / `dynamixel_baud_rate` | `/dev/dxhub` / `1000000` | ROBOTIS hardware connection |
+| `pointcloud_topic` / `scan_topic` | `/lidar_points` / `/scan` | Sensor contracts |
+
+`jt16_rs485_device` and `jt16_rs232_device` are preflight paths and must match
+the paths in the selected `jt16_config_file`. The standalone `jt16.launch.py`
+uses the equivalent `require_rs232` argument.
+
+## Robot/Operator interface contract
+
+Set the same non-conflicting `ROS_DOMAIN_ID` on the Raspberry Pi and Operator
+PC. The Robot publishes `/map`, `/scan`, `/sanehal_base_controller/odom`,
+`/joint_states`, `/tf`, `/tf_static`, and `/robot_description`. `/lidar_points`
+is a high-bandwidth debug topic and need not be displayed during normal
+operation. `/lidar_imu` remains disabled until its hardware data contract is
+validated.
+
+Teleoperation sends `geometry_msgs/msg/TwistStamped` to
+`/sanehal_base_controller/cmd_vel`. The Robot-side controller timeout is 0.5 s;
+the Operator-side implementation in Issue #41 must also require a deadman
+button. A future teleop/Nav2 mux belongs upstream of this controller input.
 
 Inspect the raw JT16 contract before starting the converter:
 
@@ -96,16 +143,17 @@ If the SANEHAL-2 base is already running, avoid duplicate controller and TF
 publishers:
 
 ```bash
-ros2 launch sanehal_bringup slam.launch.py start_robot_bringup:=false
+ros2 launch sanehal_bringup sanehal.launch.py \
+  start_control:=false start_description:=false
 ```
 
 The live TF ownership is:
 
 - `slam_toolbox`: `map -> odom`
-- `sanehal_base_controller` (`diff_drive_controller`): `odom -> base_link`
-- `robot_state_publisher`: `base_link -> sanehal_base_link -> hesai_lidar`
+- `sanehal_base_controller` (`diff_drive_controller`): `odom -> base_footprint`
+- `robot_state_publisher`: `base_footprint -> base_link -> sanehal_base_link -> hesai_lidar`
 
-Do not add a static `map -> odom` or `odom -> base_link` publisher. Before
+Do not add a static `map -> odom` or `odom -> base_footprint` publisher. Before
 driving, confirm `/scan`, `/sanehal_base_controller/odom`, and the complete TF
 chain:
 
@@ -114,7 +162,7 @@ ros2 topic info /scan --verbose
 ros2 topic hz /scan
 ros2 topic hz /sanehal_base_controller/odom
 ros2 run tf2_ros tf2_echo base_link hesai_lidar
-ros2 run tf2_ros tf2_echo odom base_link
+ros2 run tf2_ros tf2_echo odom base_footprint
 ros2 run tf2_ros tf2_echo map odom
 ros2 topic echo /map --once
 ```
@@ -132,10 +180,10 @@ the cloud timestamp; and verify that the scan's `hesai_lidar` frame has a TF at
 that timestamp. Empty or sparse height slices and delayed timestamps commonly
 look like SLAM or TF failures.
 
-The configured `scan_time: 0.1` is metadata for the nominal 10 Hz cloud rate;
-it does not throttle conversion. Change it to `0.2` if hardware measurement
-shows 5 Hz. Missing angular bins are published as `+inf`, `time_increment` is
-zero, and the converter does not populate LaserScan intensities. Keep
+The configured `scan_time: 0.2` is metadata for the 5 Hz cloud rate measured
+on the SANEHAL-2 JT16 serial connection; it does not throttle conversion.
+Missing angular bins are published as `+inf`, `time_increment` is zero, and the
+converter does not populate LaserScan intensities. Keep
 `queue_size: 1` initially to avoid accumulating stale point clouds. On the
 Raspberry Pi and over Wi-Fi, display the raw PointCloud2 only while debugging;
 its serialization and transport can materially increase CPU and bandwidth.

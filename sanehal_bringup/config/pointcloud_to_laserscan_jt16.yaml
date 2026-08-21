@@ -1,7 +1,7 @@
 pointcloud_to_laserscan:
   ros__parameters:
     # Preserve the JT16 cloud frame and timestamp. slam_toolbox transforms the
-    # resulting scan from hesai_lidar to base_link at the scan timestamp.
+    # resulting scan from hesai_lidar to base_footprint at the scan timestamp.
     target_frame: ""
     transform_tolerance: 0.01
     # Prefer dropping an old cloud to accumulating latency on the Raspberry Pi.
@@ -18,9 +18,8 @@ pointcloud_to_laserscan:
     angle_max: 3.14159264
     angle_increment: 0.010471976
 
-    # The checked-in JT16 driver configuration defaults to 10 Hz. Set this to
-    # the reciprocal of the measured cloud rate if the unit runs at 5 Hz.
-    scan_time: 0.1
+    # The SANEHAL-2 JT16 serial stream was measured at 5 Hz on hardware.
+    scan_time: 0.2
     range_min: 0.3
     range_max: 30.0
     use_inf: true

@@ -1,22 +1,29 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="sanehal_ros2_control" params="name prefix">
+  <xacro:macro name="sanehal_ros2_control"
+      params="name prefix use_mock_hardware:=false dynamixel_port:=/dev/dxhub dynamixel_baud_rate:=1000000">
 
     <ros2_control name="${name}" type="system">
       <hardware>
-        <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
-        <param name="port_name">/dev/dxhub</param>
-        <param name="baud_rate">1000000</param>
-        <param name="error_timeout_ms">500</param>
-        <!-- Appended to the dynamixel_hardware_interface package share path. -->
-        <param name="dynamixel_model_folder">/param/dxl_model</param>
-        <param name="number_of_joints">2</param>
-        <param name="number_of_transmissions">2</param>
-        <param name="disable_torque_at_init">true</param>
-        <!-- ID 2 is the left motor; ID 1 is the oppositely mounted right motor. -->
-        <param name="transmission_to_joint_matrix">1, 0, 0, -1</param>
-        <param name="joint_to_transmission_matrix">1, 0, 0, -1</param>
+        <xacro:if value="${use_mock_hardware}">
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">false</param>
+        </xacro:if>
+        <xacro:unless value="${use_mock_hardware}">
+          <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+          <param name="port_name">${dynamixel_port}</param>
+          <param name="baud_rate">${dynamixel_baud_rate}</param>
+          <param name="error_timeout_ms">500</param>
+          <!-- Appended to the dynamixel_hardware_interface package share path. -->
+          <param name="dynamixel_model_folder">/param/dxl_model</param>
+          <param name="number_of_joints">2</param>
+          <param name="number_of_transmissions">2</param>
+          <param name="disable_torque_at_init">true</param>
+          <!-- ID 2 is left; ID 1 is the oppositely mounted right motor. -->
+          <param name="transmission_to_joint_matrix">1, 0, 0, -1</param>
+          <param name="joint_to_transmission_matrix">1, 0, 0, -1</param>
+        </xacro:unless>
       </hardware>
       <joint name="${prefix}left_wheel_joint">
         <command_interface name="velocity"/>
@@ -29,7 +36,8 @@
         <state_interface name="velocity"/>
       </joint>
 
-      <gpio name="left_wheel_dxl">
+      <xacro:unless value="${use_mock_hardware}">
+        <gpio name="left_wheel_dxl">
         <param name="type">dxl</param>
         <param name="ID">2</param>
         <command_interface name="Goal Velocity"/>
@@ -38,8 +46,8 @@
         <state_interface name="Present Velocity"/>
         <param name="Operating Mode">1</param>
         <param name="Return Delay Time">0</param>
-      </gpio>
-      <gpio name="right_wheel_dxl">
+        </gpio>
+        <gpio name="right_wheel_dxl">
         <param name="type">dxl</param>
         <param name="ID">1</param>
         <command_interface name="Goal Velocity"/>
@@ -48,7 +56,8 @@
         <state_interface name="Present Velocity"/>
         <param name="Operating Mode">1</param>
         <param name="Return Delay Time">0</param>
-      </gpio>
+        </gpio>
+      </xacro:unless>
     </ros2_control>
 
   </xacro:macro>

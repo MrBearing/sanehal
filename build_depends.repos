@@ -11,14 +11,6 @@ repositories:
     type: git
     url: https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git
     version: jazzy
-  ldlidar_stl_ros2:
-    type: git
-    url: https://github.com/MrBearing/ldlidar_stl_ros2.git
-    version: jazzy
-  ldlidar_stl_utils:
-    type: git
-    url: https://github.com/MrBearing/ldlidar_stl_utils.git
-    version: humble
   hesai_lidar_ros2:
     type: git
     url: https://github.com/HesaiTechnology/HesaiLidar_ROS_2.0.git

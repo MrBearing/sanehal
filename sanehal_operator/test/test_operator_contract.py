@@ -80,6 +80,8 @@ def test_startup_revalidates_stable_gamepad_link():
     script = (REPOSITORY_ROOT / 'scripts' / 'operator' / 'up.sh').read_text()
     assert 'current_gamepad_device=$(readlink -f "${gamepad_by_id}")' in script
     assert '"${current_gamepad_device}" != "${gamepad_device}"' in script
+    assert '[ -z "${gamepad_by_id}" ]' in script
+    assert 'GAMEPAD_BY_ID is missing.' in script
 
 
 def test_configuration_checks_container_group_read_permission():

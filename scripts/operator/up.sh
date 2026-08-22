@@ -14,6 +14,10 @@ compose_files=(-f compose.operator.yaml)
 gamepad_device=$(sed -n 's/^GAMEPAD_DEVICE=//p' .env | tail -n 1)
 if [ -n "${gamepad_device}" ]; then
   gamepad_by_id=$(sed -n 's/^GAMEPAD_BY_ID=//p' .env | tail -n 1)
+  if [ -z "${gamepad_by_id}" ]; then
+    echo "GAMEPAD_BY_ID is missing. Rerun configure.sh before starting teleop." >&2
+    exit 1
+  fi
   if [ ! -L "${gamepad_by_id}" ]; then
     echo "Configured gamepad link disappeared. Reconnect USB and rerun configure.sh." >&2
     exit 1

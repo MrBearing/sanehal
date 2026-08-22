@@ -37,7 +37,10 @@ GamepadTeleopNode::GamepadTeleopNode(const rclcpp::NodeOptions & options)
     throw std::invalid_argument(
             "deadman_button and turbo_button must be different supported PlayStation buttons");
   }
-  if (!(deadzone_ >= 0.0 && deadzone_ < 1.0) || timeout <= 0.0 ||
+  if (!std::isfinite(deadzone_) || !std::isfinite(timeout) ||
+    !std::isfinite(linear_speed_) || !std::isfinite(angular_speed_) ||
+    !std::isfinite(turbo_linear_speed_) || !std::isfinite(turbo_angular_speed_) ||
+    !(deadzone_ >= 0.0 && deadzone_ < 1.0) || timeout <= 0.0 ||
     linear_speed_ < 0.0 || angular_speed_ < 0.0 ||
     turbo_linear_speed_ < linear_speed_ || turbo_angular_speed_ < angular_speed_)
   {

@@ -45,6 +45,8 @@ def test_teleop_publishes_stamped_commands_and_has_watchdog():
     assert 'std::chrono::steady_clock' in header
     assert 'button_pressed(deadman_button_)' in source
     assert 'Joy input timed out; commanding stop' in source
+    assert 'std::isfinite(timeout)' in source
+    assert 'std::isfinite(turbo_angular_speed_)' in source
 
 
 def test_playstation_dependency_is_pinned_consistently():
@@ -65,6 +67,12 @@ def test_gamepad_compose_exposes_only_selected_device():
     assert '${INPUT_GID:?INPUT_GID is required}' in compose
     assert 'privileged:' not in compose
     assert '/dev/input:/dev/input' not in compose
+
+
+def test_startup_revalidates_stable_gamepad_link():
+    script = (REPOSITORY_ROOT / 'scripts' / 'operator' / 'up.sh').read_text()
+    assert 'current_gamepad_device=$(readlink -f "${gamepad_by_id}")' in script
+    assert '"${current_gamepad_device}" != "${gamepad_device}"' in script
 
 
 def test_rviz_monitoring_contract():

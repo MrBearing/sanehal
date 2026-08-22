@@ -46,8 +46,13 @@ if [ -n "${gamepad_by_id}" ]; then
       exit 1
       ;;
   esac
-  if [ ! -c "${gamepad_device}" ] || [ ! -r "${gamepad_device}" ]; then
-    echo "Gamepad event device is not a readable character device: ${gamepad_device}" >&2
+  if [ ! -c "${gamepad_device}" ]; then
+    echo "Gamepad event device is not a character device: ${gamepad_device}" >&2
+    exit 1
+  fi
+  device_permissions=$(stat -c '%A' "${gamepad_device}")
+  if [ "${device_permissions:4:1}" != "r" ]; then
+    echo "Gamepad event device is not group-readable: ${gamepad_device}" >&2
     exit 1
   fi
   input_gid=$(stat -c '%g' "${gamepad_device}")

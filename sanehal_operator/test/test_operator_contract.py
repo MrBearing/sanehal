@@ -47,6 +47,13 @@ def test_teleop_publishes_stamped_commands_and_has_watchdog():
     assert 'Joy input timed out; commanding stop' in source
     assert 'std::isfinite(timeout)' in source
     assert 'std::isfinite(turbo_angular_speed_)' in source
+    publisher_position = source.index('command_publisher_ = create_publisher')
+    stop_position = source.index('publish_stop();', publisher_position)
+    subscription_position = source.index('joy_subscription_ =', publisher_position)
+    assert publisher_position < stop_position < subscription_position
+
+    cmake = (PACKAGE_ROOT / 'CMakeLists.txt').read_text()
+    assert 'target_compile_features(gamepad_teleop_node PUBLIC cxx_std_17)' in cmake
 
 
 def test_playstation_dependency_is_pinned_consistently():
@@ -73,6 +80,15 @@ def test_startup_revalidates_stable_gamepad_link():
     script = (REPOSITORY_ROOT / 'scripts' / 'operator' / 'up.sh').read_text()
     assert 'current_gamepad_device=$(readlink -f "${gamepad_by_id}")' in script
     assert '"${current_gamepad_device}" != "${gamepad_device}"' in script
+
+
+def test_configuration_checks_container_group_read_permission():
+    script = (
+        REPOSITORY_ROOT / 'scripts' / 'operator' / 'configure.sh'
+    ).read_text()
+    assert "device_permissions=$(stat -c '%A'" in script
+    assert '"${device_permissions:4:1}" != "r"' in script
+    assert '[ ! -r "${gamepad_device}" ]' not in script
 
 
 def test_rviz_monitoring_contract():

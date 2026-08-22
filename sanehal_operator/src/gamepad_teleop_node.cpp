@@ -54,6 +54,7 @@ GamepadTeleopNode::GamepadTeleopNode(const rclcpp::NodeOptions & options)
 
   command_publisher_ = create_publisher<TwistStamped>(
     command_topic, rclcpp::QoS(1).reliable().durability_volatile());
+  publish_stop();
   joy_subscription_ = create_subscription<Joy>(
     joy_topic, rclcpp::SensorDataQoS().keep_last(1),
     std::bind(&GamepadTeleopNode::on_joy, this, std::placeholders::_1));

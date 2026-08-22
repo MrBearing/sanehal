@@ -8,6 +8,7 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 add_executable(gamepad_teleop_node src/gamepad_teleop_node.cpp)
+target_compile_features(gamepad_teleop_node PUBLIC cxx_std_17)
 target_include_directories(gamepad_teleop_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

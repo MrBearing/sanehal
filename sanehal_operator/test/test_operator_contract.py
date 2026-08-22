@@ -91,6 +91,8 @@ def test_configuration_checks_container_group_read_permission():
     assert "device_permissions=$(stat -c '%A'" in script
     assert '"${device_permissions:4:1}" != "r"' in script
     assert '[ ! -r "${gamepad_device}" ]' not in script
+    assert '"${input_gid}" = "0"' in script
+    assert 'Refusing gamepad device owned by root group' in script
 
 
 def test_rviz_monitoring_contract():

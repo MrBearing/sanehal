@@ -56,6 +56,11 @@ if [ -n "${gamepad_by_id}" ]; then
     exit 1
   fi
   input_gid=$(stat -c '%g' "${gamepad_device}")
+  if [ "${input_gid}" = "0" ]; then
+    echo "Refusing gamepad device owned by root group (GID 0): ${gamepad_device}" >&2
+    echo "Fix the host udev/input group assignment before enabling teleop." >&2
+    exit 1
+  fi
 fi
 
 umask 077

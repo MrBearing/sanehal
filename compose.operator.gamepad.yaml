@@ -1,0 +1,13 @@
+services:
+  operator:
+    devices:
+      - ${GAMEPAD_DEVICE:?GAMEPAD_DEVICE is required}:${GAMEPAD_DEVICE}:r
+    group_add:
+      - ${INPUT_GID:?INPUT_GID is required}
+    command:
+      - ros2
+      - launch
+      - sanehal_operator
+      - operator.launch.py
+      - enable_teleop:=true
+      - gamepad_model:=${GAMEPAD_MODEL:?GAMEPAD_MODEL is required}

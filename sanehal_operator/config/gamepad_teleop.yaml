@@ -1,0 +1,24 @@
+operator:
+  joy:
+    ros__parameters:
+      device_id: 0
+      device_name: ""
+      deadzone: 0.10
+      autorepeat_rate: 20.0
+      sticky_buttons: false
+      coalesce_interval_ms: 1
+
+  gamepad_teleop:
+    ros__parameters:
+      hw_type: DualSense
+      joy_topic: joy
+      cmd_vel_topic: /sanehal_base_controller/cmd_vel
+      deadman_button: L1
+      turbo_button: R1
+      linear_speed: 0.05
+      angular_speed: 0.30
+      turbo_linear_speed: 0.10
+      turbo_angular_speed: 0.60
+      deadzone: 0.10
+      joy_timeout: 0.25
+      frame_id: base_footprint

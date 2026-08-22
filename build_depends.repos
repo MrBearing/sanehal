@@ -1,4 +1,9 @@
 repositories:
+  PlayStation-JoyInterface-ROS2:
+    type: git
+    url: https://github.com/MrBearing/PlayStation-JoyInterface-ROS2.git
+    # jazzy branch, pinned for reproducible Operator builds.
+    version: 75a79bbe1af6012a3ab1a77f3d380cf1fd8c3d17
   DynamixelSDK:
     type: git
     url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git

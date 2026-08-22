@@ -1,8 +1,8 @@
 # SANEHAL-2 Operator
 
-This package contains only Operator-side monitoring. It starts RViz and never
-starts Robot hardware, `robot_state_publisher`, the JT16 driver, scan conversion,
-or `slam_toolbox`.
+This package contains Operator-side monitoring and opt-in USB PlayStation
+gamepad teleoperation. It never starts Robot hardware, `robot_state_publisher`,
+the JT16 driver, scan conversion, or `slam_toolbox`.
 
 ## ROS interface contract
 
@@ -74,6 +74,19 @@ named build/install/log volumes with the Operator UID/GID. Install host package
 `xauth` if it is absent. Developers can replace the software override with the
 GPU override when hardware acceleration is required.
 
+The default `.devcontainer/devcontainer.json` remains the monitoring-only
+development environment. For gamepad development, first run `configure.sh` with
+`GAMEPAD_BY_ID` and then open `.devcontainer/gamepad/devcontainer.json`; this
+adds the same minimal USB event-device override while retaining the source and
+build-volume mounts. Its development command remains `sleep infinity`, so start
+teleop explicitly after building:
+
+```bash
+. install/setup.bash
+ros2 launch sanehal_operator operator.launch.py \
+  enable_teleop:=true gamepad_model:=DualSense
+```
+
 The base image is pinned by digest in the Dockerfile, Compose default, and
 `.env.example`. To update it, resolve the new `osrf/ros:jazzy-desktop` digest,
 change all three references together, rebuild without relying on the old base,
@@ -142,10 +155,90 @@ lifecycle continue on the Raspberry Pi. Reconnect, run `ros2 daemon stop`, and
 restart RViz if its DDS graph cache does not recover. The Robot SLAM process must
 not be restarted.
 
-## Issue #41 extension
+## USB PlayStation gamepad teleoperation
 
-Teleoperation should extend this image and network contract with a separate
-Compose override. Map only the selected `/dev/input/event*` or `/dev/input/js*`
-device and add its `input` group GID; do not use `privileged: true` or expose all
-of `/dev/input`. The Robot controller accepts `TwistStamped` on
-`/sanehal_base_controller/cmd_vel` and retains its 0.5 second timeout.
+Supported models are `DualShock3`, `DualShock4`, and `DualSense`. The gamepad
+uses a USB data cable connected to the Ubuntu 26.04 host. The host owns USB,
+udev, and the kernel HID/input drivers; Bluetooth, BlueZ, and D-Bus are not part
+of this path and are not exposed to the container.
+
+Identify the controller before configuration:
+
+```bash
+lsusb
+cat /proc/bus/input/devices
+ls -l /dev/input/by-id/*-event-joystick
+udevadm info --query=property --name=/dev/input/eventN
+```
+
+Use the controller's stable `*-event-joystick` link, not a guessed `eventN`.
+The configuration script resolves that link, verifies a readable character
+device, and records its current path and group GID. Compose maps only that event
+device read-only and adds only its GID. It does not use `privileged: true` or
+expose `/dev`, `/dev/input`, the USB bus, or host D-Bus.
+
+```bash
+ROS_DOMAIN_ID=42 \
+GAMEPAD_BY_ID=/dev/input/by-id/<controller>-event-joystick \
+GAMEPAD_MODEL=DualSense \
+scripts/operator/configure.sh
+scripts/operator/up.sh
+```
+
+Valid model values are exactly `DualShock3`, `DualShock4`, and `DualSense`.
+Before allowing wheel motion, verify the SDL device and the selected p9n mapping
+inside the container:
+
+```bash
+ros2 run joy joy_enumerate_devices
+ros2 launch p9n_test test.launch.py hw_type:=DualSense
+ros2 topic echo /operator/joy
+```
+
+The SANEHAL node reuses `p9n_interface::PlayStationInterface`; raw Linux axis
+and button numbers are not duplicated in this package. L1 is the default
+hold-to-run deadman and R1 enables turbo only while L1 remains held. The default
+normal limits are 0.05 m/s and 0.30 rad/s; turbo is 0.10 m/s and 0.60 rad/s.
+The node publishes `geometry_msgs/msg/TwistStamped` directly to
+`/sanehal_base_controller/cmd_vel`. It must be the only publisher on that topic:
+
+```bash
+ros2 topic info /sanehal_base_controller/cmd_vel --verbose
+```
+
+The Operator Joy watchdog publishes zero after 0.25 seconds without input. The
+Robot controller independently rejects commands after 0.5 seconds. Releasing
+L1 publishes zero immediately. Neither timeout replaces a physical emergency
+stop or an operator next to the Robot power switch during initial tests.
+
+For a direct launch inside a configured container:
+
+```bash
+. /opt/sanehal_operator_ws/install/setup.bash
+ros2 launch sanehal_operator operator.launch.py \
+  enable_teleop:=true gamepad_model:=DualSense
+```
+
+USB removal must stop the Robot. If reconnection creates a different `eventN`,
+the existing Docker device mapping cannot follow it. Re-run `configure.sh` and
+recreate the service with `up.sh`. Do not broaden device access to avoid this
+explicit recovery step. A charge-only cable will power a controller without
+creating an input device; use a known USB data cable. Secure the cable so it
+cannot enter the wheels or pull the Operator PC.
+
+### Staged hardware validation
+
+1. Verify `/operator/joy` and run `p9n_test` with Robot drive power disabled.
+2. Raise and securely support the wheels; keep hands and cables clear.
+3. Confirm no movement without L1, then test forward, reverse, left, right, and
+   in-place turns at normal speed.
+4. Release L1 during each motion and measure the stop response.
+5. While commanding motion, unplug USB, stop the container, and disconnect the
+   Operator network separately. Each test must stop through the 0.25/0.5 second
+   timeout chain.
+6. Only after direction and stopping pass, repeat at low speed on a clear floor.
+7. Test turbo last, with an operator beside the Robot power switch.
+
+The current system has no keyboard, Nav2, or mux command source. Before adding
+one, keep each source on a separate topic and add a Robot-side TwistStamped
+arbiter; only that arbiter may then publish to the controller input.

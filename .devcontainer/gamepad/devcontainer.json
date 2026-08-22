@@ -1,0 +1,14 @@
+{
+  "name": "SANEHAL-2 Operator + USB Gamepad (ROS 2 Jazzy)",
+  "dockerComposeFile": [
+    "../../compose.operator.yaml",
+    "../../compose.operator.x11.yaml",
+    "../../compose.operator.software-rendering.yaml",
+    "../../compose.operator.gamepad.yaml",
+    "../compose.devcontainer.yaml"
+  ],
+  "service": "operator",
+  "workspaceFolder": "/workspaces/sanehal",
+  "remoteUser": "operator",
+  "shutdownAction": "stopCompose"
+}

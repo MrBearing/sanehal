@@ -11,9 +11,12 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libgl1-mesa-dri \
         mesa-utils \
+        git \
         python3-colcon-common-extensions \
         python3-rosdep \
+        python3-vcstool \
         qtwayland5 \
+        ros-jazzy-joy \
         ros-jazzy-slam-toolbox \
         ros-jazzy-tf2-tools \
     && rm -rf /var/lib/apt/lists/* \
@@ -23,10 +26,14 @@ RUN apt-get update \
     && usermod --groups '' "${USER_NAME}"
 
 WORKDIR /opt/sanehal_operator_ws
+COPY docker/operator/operator_depends.repos operator_depends.repos
+RUN mkdir -p src \
+    && vcs import src < operator_depends.repos
 COPY sanehal_operator src/sanehal_operator
 
 RUN source /opt/ros/jazzy/setup.bash \
-    && colcon build --merge-install --packages-select sanehal_operator \
+    && rosdep install --from-paths src --ignore-src -r -y --rosdistro jazzy \
+    && colcon build --merge-install --packages-up-to sanehal_operator p9n_test \
     && rm -rf build log \
     && chown -R "${USER_UID}:${USER_GID}" /opt/sanehal_operator_ws \
     && mkdir -p /workspaces/sanehal/build /workspaces/sanehal/install /workspaces/sanehal/log \

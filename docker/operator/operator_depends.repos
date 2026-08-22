@@ -1,0 +1,6 @@
+repositories:
+  PlayStation-JoyInterface-ROS2:
+    type: git
+    url: https://github.com/MrBearing/PlayStation-JoyInterface-ROS2.git
+    # jazzy branch, pinned to the same revision as build_depends.repos.
+    version: 75a79bbe1af6012a3ab1a77f3d380cf1fd8c3d17

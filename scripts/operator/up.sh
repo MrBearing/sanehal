@@ -11,6 +11,15 @@ fi
 
 compose_files=(-f compose.operator.yaml)
 
+gamepad_device=$(sed -n 's/^GAMEPAD_DEVICE=//p' .env | tail -n 1)
+if [ -n "${gamepad_device}" ]; then
+  if [ ! -c "${gamepad_device}" ]; then
+    echo "Configured gamepad device disappeared. Reconnect USB and rerun configure.sh." >&2
+    exit 1
+  fi
+  compose_files+=(-f compose.operator.gamepad.yaml)
+fi
+
 display_name=${DISPLAY:-$(sed -n 's/^DISPLAY=//p' .env | tail -n 1)}
 
 if [ -n "${display_name}" ]; then

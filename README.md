@@ -58,6 +58,21 @@ ROS_DOMAIN_ID=42 scripts/operator/configure.sh  # 配備ごとに値を選ぶ
 scripts/operator/up.sh
 ```
 
+For USB PlayStation gamepad teleoperation, identify its stable
+`/dev/input/by-id/*-event-joystick` link and pass it during configuration:
+
+```bash
+ROS_DOMAIN_ID=42 \
+GAMEPAD_BY_ID=/dev/input/by-id/<controller>-event-joystick \
+GAMEPAD_MODEL=DualSense \
+scripts/operator/configure.sh
+scripts/operator/up.sh
+```
+
+See `sanehal_operator/README.md` for the mandatory mapping and raised-wheel
+safety tests. Bluetooth is not used; the controller connects to the host with a
+USB data cable.
+
 RobotとOperator PCで同じ`ROS_DOMAIN_ID`、`rmw_fastrtps_cpp`、discovery
 設定を使用してください。実機なしのgraph/TF確認には次を使用できます。
 

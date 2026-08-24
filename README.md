@@ -4,6 +4,23 @@
 
 ## 事前準備
 
+SANEHAL-2の統合試験と通常運用は
+[`docs/sanehal2_system_integration.md`](docs/sanehal2_system_integration.md)
+に従ってください。Robot側処理はRaspberry Pi 5、RViz・ゲームパッド・試験統括は
+Operator PCで実行します。
+進行中のIssue #29試験結果は
+[`docs/issue29_results_2026-08-24.md`](docs/issue29_results_2026-08-24.md)
+に記録します。
+
+### ROS 2 Jazzyのインストール
+
+Ubuntu 24.04へROS 2 Jazzyをインストールし、依存導入前に環境をsourceします。
+Operator PCがUbuntu 24.04以外の場合は、後述のOperator containerを使用してください。
+
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
 ### ワークスペース作成とリポジトリのクローン
 
 ```bash
@@ -11,11 +28,18 @@ mkdir -p ws_sanehal/src
 cd ws_sanehal/src
 git clone git@github.com:MrBearing/sanehal.git
 cd sanehal/
+source /opt/ros/jazzy/setup.bash
 ./setup.bash
 ```
-### ROSのインストール
 
-[ここを](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#install-ros-2)参照
+`setup.bash`は`.repos`に固定したsource dependencyを、まだ存在しない場合だけ
+workspaceへimportします。既存repositoryを`pull`しません。Hesai driver v2.0.12が
+package manifestに宣言していないsystem dependencyも先に導入してください。
+
+```bash
+sudo apt-get update
+sudo apt-get install -y libboost-all-dev libyaml-cpp-dev python3-rosdep python3-vcstool
+```
 
 ### JT16とDynamixelのrulesファイル追加とデバイス再起動
 
@@ -38,7 +62,11 @@ group追加後はログアウトして再ログインしてください。
 
 ## ビルド方法
 ```bash
-colcon build
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+colcon test
+colcon test-result --verbose
 ```
 
 ## 動作確認
@@ -71,7 +99,11 @@ scripts/operator/up.sh
 
 See `sanehal_operator/README.md` for the mandatory mapping and raised-wheel
 safety tests. Bluetooth is not used; the controller connects to the host with a
-USB data cable.
+USB data cable. After connecting a DualShock 3, press its PS button and verify
+live axis/button changes before enabling Robot drive power; receiving only
+neutral Joy messages does not prove that the controller is active. After any
+USB disconnect/reconnect, rerun `configure.sh` and recreate the Operator
+container even if the by-id link resolves to the same event number.
 
 RobotとOperator PCで同じ`ROS_DOMAIN_ID`、`rmw_fastrtps_cpp`、discovery
 設定を使用してください。実機なしのgraph/TF確認には次を使用できます。

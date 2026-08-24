@@ -20,7 +20,10 @@ sanehal_base_controller:
 
     # Keep calibration neutral here.  Motor direction is not a geometry
     # correction and is handled by the ros2_control transmission matrix.
-    wheel_separation_multiplier: 1.0
+    # 2026-08-24 floor calibration: physical 360 deg produced 366.23/368.14 deg
+    # wheel odometry (left/right). Their mean gives 1.0201; use two decimals to
+    # avoid encoding more precision than the manual heading measurement supports.
+    wheel_separation_multiplier: 1.02
     left_wheel_radius_multiplier: 1.0
     # Motor mounting directions are handled by the ros2_control transmission matrix.
     right_wheel_radius_multiplier: 1.0
@@ -44,22 +47,21 @@ sanehal_base_controller:
 
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true
-    linear.x.has_jerk_limits: false
     # Conservative SANEHAL-2 limits for initial hardware validation.
     # Raise these only after wheel direction, braking, and odometry are verified.
     linear.x.max_velocity: 0.20
     linear.x.min_velocity: -0.20
     linear.x.max_acceleration: 0.20
     linear.x.min_acceleration: -0.20
-    linear.x.max_jerk: 0.0
-    linear.x.min_jerk: 0.0
+    # NaN disables jerk limits in Jazzy without the deprecated has_jerk_limits flag.
+    linear.x.max_jerk: .nan
+    linear.x.min_jerk: .nan
 
     angular.z.has_velocity_limits: true
     angular.z.has_acceleration_limits: true
-    angular.z.has_jerk_limits: false
     angular.z.max_velocity: 1.0
     angular.z.min_velocity: -1.0
     angular.z.max_acceleration: 0.5
     angular.z.min_acceleration: -0.5
-    angular.z.max_jerk: 0.0
-    angular.z.min_jerk: 0.0
+    angular.z.max_jerk: .nan
+    angular.z.min_jerk: .nan

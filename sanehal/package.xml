@@ -3,13 +3,14 @@
 <package format="3">
   <name>sanehal</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Metapackage for the SANEHAL-2 ROS 2 stack.</description>
   <maintainer email="takumi1988okamoto@gmail.com">takumi</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <exec_depend>sanehal_vehicle_sandbox</exec_depend>
   <exec_depend>sanehal_vehicle_description</exec_depend>
+  <exec_depend>sanehal_bringup</exec_depend>
+  <exec_depend>sanehal_operator</exec_depend>
   
   <export>
     <build_type>ament_cmake</build_type>

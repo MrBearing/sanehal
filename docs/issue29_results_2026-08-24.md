@@ -31,6 +31,7 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | R02 raised-wheel directions | PASS | forward `[+1.246,+1.222]`, reverse `[-1.222,-1.222]`, left `[-0.743,+0.719]`, right `[+0.743,-0.719]` rad/s |
 | R03 command timeout | PASS | both measured wheel velocities were 0.0 one second after command publication stopped |
 | S01 stationary full stack | PASS | `slam_toolbox` active; cloud/scan about 4.987 Hz; odom about 50 Hz; map 71x85 at 0.05 m; complete TF available |
+| S03 map save/reload smoke | PASS | saved 73x85 map; YAML `add5112...addf`, PGM `d77d55...9e3b`; separate lifecycle map server loaded and published it |
 | O01 Operator discovery | PASS with recovery step | remote map/scan/odom/TF/lifecycle available after `ros2 daemon stop` and graph rediscovery |
 | O02 RViz startup | FAIL | RobotModel/map data received, but OccupancyGrid GLSL link error occurs with GPU and software rendering; tracked by #53 |
 | T01 no-deadman idle | PASS | physical Joy messages observed with all buttons released and no nonzero command/motion observed |
@@ -49,10 +50,10 @@ ROS distributions. They do not fail the Jazzy build and are outside #29.
 | Robot time | Asia/Tokyo, NTP synchronized | PASS |
 | Robot resources | 15 GiB RAM, 13 GiB available, swap unused, load 0.28/0.25/0.33 | PASS |
 | Existing ROS processes | none observed | PASS |
-| Robot source | `jazzy` at base commit; untracked `AGENTS.md` and `test_jt16.bash` | BLOCKED: issue branch not deployed; preserve user files |
+| Robot source | feature branch deployed at `c15de5e`; untracked `AGENTS.md` and `test_jt16.bash` preserved | PASS |
 | Operator gamepad | USB Sony PLAYSTATION 3, stable by-id link to event9 | PASS |
-| Operator domain | 42 | FAIL: differs from Robot login environment |
-| Robot domain | 61 in `.bashrc` | FAIL: differs from Operator `.env` |
+| Operator domain | 61 | PASS |
+| Robot domain | 61 in `.bashrc` | PASS |
 | Physical safety | raised wheels, exclusion zone, observer, and physical stop not remotely verifiable | BLOCKED |
 
 The Pi initially lacked the #41 PlayStation source dependency. Importing the
@@ -82,7 +83,7 @@ Use the hostname, not the observed DHCP address, in operational instructions.
 - [ ] Record Robot and Operator clock skew and firewall/AP client-isolation state.
 
 The source/domain/build gates were subsequently cleared: both sides used domain
-61, and the Pi ran commit `b93b0c6` while preserving its two untracked files.
+61, and the Pi ran commit `c15de5e` while preserving its two untracked files.
 The build required adding the missing PlayStation dependency. An accidental
 symlink-build cache conflict was recovered without deleting source or install;
 the old affected cache is retained at
@@ -90,7 +91,7 @@ the old affected cache is retained at
 
 ## Remaining acceptance work
 
-- [ ] Validate the wheel-inertia correction removes RViz RobotModel warnings.
+- [x] Validate the wheel-inertia correction removes RViz RobotModel warnings.
 - [ ] Resolve and retest the OccupancyGrid display failure in #53.
 - [ ] Physically operate L1 and each axis, then measure L1/USB disconnect stops.
 - [ ] Perform controlled Operator Wi-Fi interruption; container stop is not a

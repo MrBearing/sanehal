@@ -6,7 +6,7 @@ if [[ "${ROS_DISTRO:-}" != "jazzy" ]]; then
   exit 1
 fi
 
-for command_name in vcs rosdep colcon; do
+for command_name in vcs rosdep; do
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     echo "Missing required command: ${command_name}" >&2
     exit 1

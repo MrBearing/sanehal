@@ -28,6 +28,17 @@ def test_setup_does_not_update_existing_source_repositories():
     assert 'vcs pull' not in setup
     assert 'ROS_DISTRO:-' in setup
     assert '--rosdistro jazzy' in setup
+    assert 'for command_name in vcs rosdep; do' in setup
+
+
+def test_wheel_cylinder_axial_inertia_stays_on_local_z():
+    xacro = (
+        REPOSITORY_ROOT / 'sanehal_vehicle_description/urdf/sanehal.xacro'
+    ).read_text(encoding='utf-8')
+    axial_izz = (
+        'izz="${wheel_mass / 2.0 * wheel_radius*wheel_radius}"'
+    )
+    assert xacro.count(axial_izz) == 2
 
 
 def test_removed_runtime_dependencies_do_not_return():

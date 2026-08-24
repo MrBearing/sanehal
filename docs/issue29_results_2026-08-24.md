@@ -40,6 +40,7 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | T04 gamepad USB removal | PASS | Joy stream ended during forward input; command reached zero in 40 ms and measured wheel velocity settled below 0.05 rad/s in 350 ms |
 | S02 first floor course | INVALID | test bench was too narrow and the Robot was obstructed by a carpet edge; although it physically returned near its start, map/odom evidence cannot be used for unconstrained-course acceptance |
 | Wheel-separation calibration | PASS | unobstructed physical 360-degree turns measured 366.23 degrees left and 368.14 degrees right in wheel odometry; multiplier corrected from 1.00 to 1.02 |
+| S02 calibrated floor course | FAIL, tuning required | wheel odometry returned within 0.017 m / 13.3 degrees, but SLAM correction ended at 0.439 m / 30.5 degrees and the map showed duplicate walls |
 | Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
 | Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
@@ -112,6 +113,14 @@ for physical left/right 360-degree turns. The controller uses their rounded
 mean, `wheel_separation_multiplier: 1.02`. The calibration bag is
 `~/maps/issue29/turn-calibration-20260824`, metadata SHA-256
 `704f3d91...37b0`, MCAP SHA-256 `f892cca0...9d30`.
+
+After calibration, the valid two-metre out-and-back wheel odometry closed to
+0.017 m and 13.3 degrees. Scan matching degraded that result to 0.439 m and
+30.5 degrees in `map -> base`, with visible duplicate walls. The scan itself
+was dense (median 599 of 600 finite bins) and stable at 4.986 Hz. The initial
+0.5 m / 0.5 rad / 0.5 s scan acceptance thresholds were therefore too coarse
+for this compact low-speed course; they were reduced to 0.1 m / 0.1 rad / 0.2 s
+for a bounded retest. The pre-tuning bag and map remain evidence, not a PASS.
 
 ## Remaining acceptance work
 

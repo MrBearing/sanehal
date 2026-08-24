@@ -17,7 +17,7 @@ repositories:
     type: git
     url: https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git
     version: 3392e1214c62c7ee9e05ccc811e3e829c063bae8
-  hesai_lidar_ros2:
+  HesaiLidar_ROS_2.0:
     type: git
     url: https://github.com/HesaiTechnology/HesaiLidar_ROS_2.0.git
     version: v2.0.12

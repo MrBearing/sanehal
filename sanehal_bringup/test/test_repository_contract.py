@@ -19,7 +19,7 @@ def test_source_dependencies_are_pinned():
         'dynamixel_interfaces',
     ):
         assert commit.fullmatch(repos[name]['version']), name
-    assert repos['hesai_lidar_ros2']['version'] == 'v2.0.12'
+    assert repos['HesaiLidar_ROS_2.0']['version'] == 'v2.0.12'
 
 
 def test_setup_does_not_update_existing_source_repositories():

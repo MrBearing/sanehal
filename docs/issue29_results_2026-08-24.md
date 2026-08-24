@@ -45,6 +45,13 @@ ROS distributions. They do not fail the Jazzy build and are outside #29.
 | Robot domain | 61 in `.bashrc` | FAIL: differs from Operator `.env` |
 | Physical safety | raised wheels, exclusion zone, observer, and physical stop not remotely verifiable | BLOCKED |
 
+The Pi initially lacked the #41 PlayStation source dependency. Importing the
+manifest also exposed a migration-path mismatch: the existing Hesai checkout
+was named `HesaiLidar_ROS_2.0`, while the manifest key requested
+`hesai_lidar_ros2`, producing a duplicate ROS package. The manifest key was
+aligned to the existing standard workspace path; the newly created duplicate
+was moved out of the workspace without altering the original checkout.
+
 The JT16-only smoke test did not start ros2_control or send motor commands. The
 driver process was absent after the bounded SIGINT/TERM/KILL cleanup. The log
 did not identify which signal completed shutdown, so graceful Hesai shutdown

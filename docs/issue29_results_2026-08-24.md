@@ -38,6 +38,8 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | T02 low-speed directions | PASS | raised-wheel run reached linear `-0.05..+0.05 m/s`, angular `-0.30..+0.30 rad/s`, and wheel velocity `-1.246..+1.270 rad/s`; forward/reverse and left/right signs observed |
 | T03 deadman release | PASS | L1 was button 4; command reached zero in 44 ms and measured wheel velocity settled below 0.05 rad/s in 350 ms |
 | T04 gamepad USB removal | PASS | Joy stream ended during forward input; command reached zero in 40 ms and measured wheel velocity settled below 0.05 rad/s in 350 ms |
+| S02 first floor course | INVALID | test bench was too narrow and the Robot was obstructed by a carpet edge; although it physically returned near its start, map/odom evidence cannot be used for unconstrained-course acceptance |
+| Wheel-separation calibration | PASS | unobstructed physical 360-degree turns measured 366.23 degrees left and 368.14 degrees right in wheel odometry; multiplier corrected from 1.00 to 1.02 |
 | Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
 | Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
@@ -100,6 +102,16 @@ verified before repeating the cases. The accepted bag is
 `~/maps/issue29/teleop-raised-valid-20260824` on the Robot: 180.4 seconds,
 29,893 messages, metadata SHA-256 `a7d33357...73c95`, MCAP SHA-256
 `fc266201...d8f7`. This activation check is now part of the runbook.
+
+The first floor course produced a 134x104 map and continuous valid scan data,
+but it is not an acceptance result: the narrow test bench and a carpet edge
+constrained the Robot. Its bag remains at
+`~/maps/issue29/floor-course-20260824` for diagnosis. A subsequent unobstructed
+turn calibration gave consistent separation multipliers of 1.0174 and 1.0228
+for physical left/right 360-degree turns. The controller uses their rounded
+mean, `wheel_separation_multiplier: 1.02`. The calibration bag is
+`~/maps/issue29/turn-calibration-20260824`, metadata SHA-256
+`704f3d91...37b0`, MCAP SHA-256 `f892cca0...9d30`.
 
 ## Remaining acceptance work
 

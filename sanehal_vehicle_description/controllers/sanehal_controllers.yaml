@@ -20,7 +20,10 @@ sanehal_base_controller:
 
     # Keep calibration neutral here.  Motor direction is not a geometry
     # correction and is handled by the ros2_control transmission matrix.
-    wheel_separation_multiplier: 1.0
+    # 2026-08-24 floor calibration: physical 360 deg produced 366.23/368.14 deg
+    # wheel odometry (left/right). Their mean gives 1.0201; use two decimals to
+    # avoid encoding more precision than the manual heading measurement supports.
+    wheel_separation_multiplier: 1.02
     left_wheel_radius_multiplier: 1.0
     # Motor mounting directions are handled by the ros2_control transmission matrix.
     right_wheel_radius_multiplier: 1.0

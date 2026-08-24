@@ -154,7 +154,10 @@ debugging, then disable it again.
 ## Teleoperation safety sequence
 
 1. With Robot drive power disabled, inspect `joy_enumerate_devices`, run
-   `p9n_test`, and confirm `/operator/joy`.
+   `p9n_test`, and confirm `/operator/joy`. After each USB connection, press the
+   controller's PS button and verify that axes leave their neutral values and
+   button 4 changes while L1 is held. Do not enable drive power if messages are
+   present but remain neutral; reconnect, press PS, and repeat this check.
 2. Raise the wheels. Confirm moving axes without L1 produces no nonzero command.
 3. Hold L1 and test forward, reverse, left/right arcs, and in-place turns.
 4. Release L1 during each motion and measure command and wheel stop times.
@@ -218,7 +221,7 @@ power. Record any Hesai process requiring signal escalation.
 | O01 | Same LAN/domain/RMW | start Operator | all required remote nodes/topics discovered | graph listing |
 | O02 | O01 | open RViz | map, scan, odom, TF, model, pose visible | screenshot and log |
 | O03 | O02 | raw cloud off/on/off | normal view works off; bandwidth delta measured | network/topic bandwidth |
-| T01 | Gamepad present | move axes without L1 | no nonzero command or motion | command bag/video |
+| T01 | Gamepad connected, PS pressed, live axes verified | move axes without L1 | no nonzero command or motion | command bag/video |
 | T02 | L1 held | all low-speed directions | bounded TwistStamped and correct motion | command/odom bag |
 | T03 | Moving | release L1 | immediate zero command and safe stop | measured stop time |
 | T04 | Moving | remove USB | 0.25/0.5 s watchdog chain stops Robot | Joy/cmd/joint bag |

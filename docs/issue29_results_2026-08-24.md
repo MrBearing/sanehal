@@ -1,6 +1,6 @@
 # Issue #29 integration result — 2026-08-24
 
-Status: **IN PROGRESS — hardware motion gate not yet opened**
+Status: **IN PROGRESS — raised-wheel teleoperation passed; floor/network/soak remain**
 
 ## Baseline
 
@@ -35,6 +35,9 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | O01 Operator discovery | PASS with recovery step | remote map/scan/odom/TF/lifecycle available after `ros2 daemon stop` and graph rediscovery |
 | O02 RViz startup | FAIL | RobotModel/map data received, but OccupancyGrid GLSL link error occurs with GPU and software rendering; tracked by #53 |
 | T01 no-deadman idle | PASS | physical Joy messages observed with all buttons released and no nonzero command/motion observed |
+| T02 low-speed directions | PASS | raised-wheel run reached linear `-0.05..+0.05 m/s`, angular `-0.30..+0.30 rad/s`, and wheel velocity `-1.246..+1.270 rad/s`; forward/reverse and left/right signs observed |
+| T03 deadman release | PASS | L1 was button 4; command reached zero in 44 ms and measured wheel velocity settled below 0.05 rad/s in 350 ms |
+| T04 gamepad USB removal | PASS | Joy stream ended during forward input; command reached zero in 40 ms and measured wheel velocity settled below 0.05 rad/s in 350 ms |
 | Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
 | Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
@@ -54,7 +57,7 @@ ROS distributions. They do not fail the Jazzy build and are outside #29.
 | Operator gamepad | USB Sony PLAYSTATION 3, stable by-id link to event9 | PASS |
 | Operator domain | 61 | PASS |
 | Robot domain | 61 in `.bashrc` | PASS |
-| Physical safety | raised wheels, exclusion zone, observer, and physical stop not remotely verifiable | BLOCKED |
+| Physical safety | user confirmed raised wheels, exclusion control, observer, and physical stop readiness before motion | PASS (operator attestation) |
 
 The Pi initially lacked the #41 PlayStation source dependency. Importing the
 manifest also exposed a migration-path mismatch: the existing Hesai checkout
@@ -89,11 +92,20 @@ symlink-build cache conflict was recovered without deleting source or install;
 the old affected cache is retained at
 `/tmp/issue29-build-backup-20260824T065545Z` on the Pi.
 
+The first physical gamepad capture contained Joy messages but all axes remained
+at their inactive values because the DualShock 3 had not been activated with
+the PS button. It produced no motion and is not accepted as T02-T04 evidence.
+After reconnecting and pressing PS, live axis changes and L1 as button 4 were
+verified before repeating the cases. The accepted bag is
+`~/maps/issue29/teleop-raised-valid-20260824` on the Robot: 180.4 seconds,
+29,893 messages, metadata SHA-256 `a7d33357...73c95`, MCAP SHA-256
+`fc266201...d8f7`. This activation check is now part of the runbook.
+
 ## Remaining acceptance work
 
 - [x] Validate the wheel-inertia correction removes RViz RobotModel warnings.
 - [ ] Resolve and retest the OccupancyGrid display failure in #53.
-- [ ] Physically operate L1 and each axis, then measure L1/USB disconnect stops.
+- [x] Physically operate L1 and each axis, then measure L1/USB disconnect stops.
 - [ ] Perform controlled Operator Wi-Fi interruption; container stop is not a
       substitute for the AP/firewall/network-path acceptance case.
 - [ ] Run the repeatable floor course, map-quality review, and map save/reload.

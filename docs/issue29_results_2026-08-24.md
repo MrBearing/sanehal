@@ -26,6 +26,16 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | Shell/diff validation | PASS | `bash -n` and `git diff --check` passed |
 | Operator Compose expansion | PASS | domain 42, Fast DDS, SUBNET discovery, event9-only device mapping, and input group addition confirmed; no privileged device exposure |
 | L01 JT16 smoke | PASS | Robot-local driver produced Reliable/Volatile PointCloud2 at 4.985-4.988 Hz, frame `hesai_lidar`, normally 9,600 points/frame; packet counter 61,395 with zero loss |
+| Pi feature build/test | PASS | 9 packages built on aarch64; 55 tests, 0 errors/failures, 2 skipped |
+| R01 controllers/hardware | PASS | official ROBOTIS hardware active; both controllers active; joint states about 100 Hz and odom about 50 Hz |
+| R02 raised-wheel directions | PASS | forward `[+1.246,+1.222]`, reverse `[-1.222,-1.222]`, left `[-0.743,+0.719]`, right `[+0.743,-0.719]` rad/s |
+| R03 command timeout | PASS | both measured wheel velocities were 0.0 one second after command publication stopped |
+| S01 stationary full stack | PASS | `slam_toolbox` active; cloud/scan about 4.987 Hz; odom about 50 Hz; map 71x85 at 0.05 m; complete TF available |
+| O01 Operator discovery | PASS with recovery step | remote map/scan/odom/TF/lifecycle available after `ros2 daemon stop` and graph rediscovery |
+| O02 RViz startup | FAIL | RobotModel/map data received, but OccupancyGrid GLSL link error occurs with GPU and software rendering; tracked by #53 |
+| T01 no-deadman idle | PASS | physical Joy messages observed with all buttons released and no nonzero command/motion observed |
+| Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
+| Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
 Upstream `p9n_*` packages emit scoped-header installation warnings for future
 ROS distributions. They do not fail the Jazzy build and are outside #29.
@@ -70,6 +80,23 @@ Use the hostname, not the observed DHCP address, in operational instructions.
 - [ ] Confirm wheels are securely raised and cables cannot reach them.
 - [ ] Place an observer beside the physical power/emergency-stop control.
 - [ ] Record Robot and Operator clock skew and firewall/AP client-isolation state.
+
+The source/domain/build gates were subsequently cleared: both sides used domain
+61, and the Pi ran commit `b93b0c6` while preserving its two untracked files.
+The build required adding the missing PlayStation dependency. An accidental
+symlink-build cache conflict was recovered without deleting source or install;
+the old affected cache is retained at
+`/tmp/issue29-build-backup-20260824T065545Z` on the Pi.
+
+## Remaining acceptance work
+
+- [ ] Validate the wheel-inertia correction removes RViz RobotModel warnings.
+- [ ] Resolve and retest the OccupancyGrid display failure in #53.
+- [ ] Physically operate L1 and each axis, then measure L1/USB disconnect stops.
+- [ ] Perform controlled Operator Wi-Fi interruption; container stop is not a
+      substitute for the AP/firewall/network-path acceptance case.
+- [ ] Run the repeatable floor course, map-quality review, and map save/reload.
+- [ ] Complete the 30-60 minute integration soak and resource measurements.
 
 After these gates pass, continue at R01 in
 `docs/sanehal2_system_integration.md`. Do not mark hardware cases PASS from the

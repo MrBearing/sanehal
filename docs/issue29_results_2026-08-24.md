@@ -1,6 +1,6 @@
 # Issue #29 integration result — 2026-08-24
 
-Status: **IN PROGRESS — raised-wheel teleoperation passed; floor/network/soak remain**
+Status: **IN PROGRESS — functional integration passed; RViz #53 and Operator trend evidence remain**
 
 ## Baseline
 
@@ -42,6 +42,8 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | Wheel-separation calibration | PASS | unobstructed physical 360-degree turns measured 366.23 degrees left and 368.14 degrees right in wheel odometry; multiplier corrected from 1.00 to 1.02 |
 | S02 calibrated floor course | FAIL, tuning required | wheel odometry returned within 0.017 m / 13.3 degrees, but SLAM correction ended at 0.439 m / 30.5 degrees and the map showed duplicate walls |
 | S02 tuned floor course | PASS with residual | 2.30 m flat-floor out-and-back; wheel odometry closed to 0.118 m / 5.3 degrees and SLAM to 0.374 m / 9.3 degrees; major wall structure remained coherent, with short-course position error retained as a risk |
+| F01/F02 Operator Wi-Fi loss/rejoin | PASS | Wi-Fi unavailable for 14.44 s; wheels settled below 0.05 rad/s 0.721 s after link loss, while Robot produced 72 scans and 3 maps; no command resumed for 181 s after reconnection |
+| E01 30-minute Robot soak | PASS | 1798.5 s, scan 4.986 Hz, map 0.201 Hz, odom 50.0 Hz, joints 100.0 Hz; no node/controller loss, OOM, swap, or unbounded Hesai/SLAM RSS growth |
 | Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
 | Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
@@ -142,15 +144,35 @@ out. Recreating the Operator container, pressing PS, and verifying live axes
 restored operation. The runbook now makes container recreation mandatory after
 every USB reconnect.
 
+For the physical Wi-Fi case, NetworkManager recorded loss at
+`1787558715.736` and successful reactivation at `1787558730.178`. The Robot
+settled below 0.05 rad/s after 0.721 s. During the 14.44-second outage it still
+generated 72 scans and three map updates. The local Operator bag continued to
+show command generation for 3.31 seconds after link loss, proving the Robot's
+independent controller timeout stopped it. No nonzero command resumed for 181
+seconds after reconnection; subsequent movement correlated with new L1 input.
+
+The stationary full-stack soak recorded 279,110 messages over 1798.5 seconds
+in `~/maps/issue29/soak-20260824/robot-topics`: metadata SHA-256
+`23bef2c0...0b06`, MCAP `cf61eb4a...2f19`. Hesai RSS was 145.3 MiB at both
+ends (145.4 MiB maximum), SLAM 78.4 MiB at both ends (78.6 MiB maximum), and
+ros2_control rose from 68.1 to 79.5 MiB (79.6 MiB maximum). Final temperature
+was 50.15 C, swap was unused, and 14 GiB remained available. The Operator
+container remained running with zero restarts/OOM and a final 229 MiB RSS
+snapshot. Its periodic stats logger produced no samples, and host networking
+makes Docker NetIO unavailable; Operator CPU/memory/network trends therefore
+remain an evidence gap. The final software-rendered RViz snapshot used 216%
+CPU and reinforces the separate RViz/OpenGL risk in #53.
+
 ## Remaining acceptance work
 
 - [x] Validate the wheel-inertia correction removes RViz RobotModel warnings.
 - [ ] Resolve and retest the OccupancyGrid display failure in #53.
 - [x] Physically operate L1 and each axis, then measure L1/USB disconnect stops.
-- [ ] Perform controlled Operator Wi-Fi interruption; container stop is not a
+- [x] Perform controlled Operator Wi-Fi interruption; container stop is not a
       substitute for the AP/firewall/network-path acceptance case.
-- [ ] Run the repeatable floor course, map-quality review, and map save/reload.
-- [ ] Complete the 30-60 minute integration soak and resource measurements.
+- [x] Run the repeatable floor course, map-quality review, and map save/reload.
+- [x] Complete the 30-60 minute Robot integration soak and resource measurements.
 
 After these gates pass, continue at R01 in
 `docs/sanehal2_system_integration.md`. Do not mark hardware cases PASS from the

@@ -101,7 +101,9 @@ See `sanehal_operator/README.md` for the mandatory mapping and raised-wheel
 safety tests. Bluetooth is not used; the controller connects to the host with a
 USB data cable. After connecting a DualShock 3, press its PS button and verify
 live axis/button changes before enabling Robot drive power; receiving only
-neutral Joy messages does not prove that the controller is active.
+neutral Joy messages does not prove that the controller is active. After any
+USB disconnect/reconnect, rerun `configure.sh` and recreate the Operator
+container even if the by-id link resolves to the same event number.
 
 RobotとOperator PCで同じ`ROS_DOMAIN_ID`、`rmw_fastrtps_cpp`、discovery
 設定を使用してください。実機なしのgraph/TF確認には次を使用できます。

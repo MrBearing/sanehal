@@ -158,6 +158,10 @@ debugging, then disable it again.
    controller's PS button and verify that axes leave their neutral values and
    button 4 changes while L1 is held. Do not enable drive power if messages are
    present but remain neutral; reconnect, press PS, and repeat this check.
+   A USB reconnect creates a new Linux event device even when the by-id link
+   resolves to the same `/dev/input/eventN`. Re-run `configure.sh` and recreate
+   the Operator container before pressing PS; an existing container retains the
+   stale device handle and its Joy stream eventually stops.
 2. Raise the wheels. Confirm moving axes without L1 produces no nonzero command.
 3. Hold L1 and test forward, reverse, left/right arcs, and in-place turns.
 4. Release L1 during each motion and measure command and wheel stop times.

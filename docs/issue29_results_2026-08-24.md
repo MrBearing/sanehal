@@ -41,6 +41,7 @@ run. Large logs, bags, maps, screenshots, and videos are not stored in Git.
 | S02 first floor course | INVALID | test bench was too narrow and the Robot was obstructed by a carpet edge; although it physically returned near its start, map/odom evidence cannot be used for unconstrained-course acceptance |
 | Wheel-separation calibration | PASS | unobstructed physical 360-degree turns measured 366.23 degrees left and 368.14 degrees right in wheel odometry; multiplier corrected from 1.00 to 1.02 |
 | S02 calibrated floor course | FAIL, tuning required | wheel odometry returned within 0.017 m / 13.3 degrees, but SLAM correction ended at 0.439 m / 30.5 degrees and the map showed duplicate walls |
+| S02 tuned floor course | PASS with residual | 2.30 m flat-floor out-and-back; wheel odometry closed to 0.118 m / 5.3 degrees and SLAM to 0.374 m / 9.3 degrees; major wall structure remained coherent, with short-course position error retained as a risk |
 | Operator participant loss/rejoin | PASS | container stop left Robot SLAM active and scan near 4.99 Hz; restart recovered map, lifecycle, and TF without Robot restart |
 | Ordered shutdown | PASS with warning | both Dynamixels Torque OFF; hardware deactivate/shutdown successful; controller statistics thread logs an error after context invalidation |
 
@@ -121,6 +122,25 @@ was dense (median 599 of 600 finite bins) and stable at 4.986 Hz. The initial
 0.5 m / 0.5 rad / 0.5 s scan acceptance thresholds were therefore too coarse
 for this compact low-speed course; they were reduced to 0.1 m / 0.1 rad / 0.2 s
 for a bounded retest. The pre-tuning bag and map remain evidence, not a PASS.
+
+With the denser scan acceptance settings, the final flat-floor course produced
+an 88x139 map with coherent major wall structure and substantially less radial
+duplication. Its Robot bag is
+`~/maps/issue29/floor-course-slam-tuned-valid-20260824` (MCAP SHA-256
+`a6a04b05...2904a`, metadata `4a52a61d...4b19`); the saved YAML is
+`88cd5208...9836` and PGM is `a586c38b...a042`. Wheel odometry closed to
+0.118 m / 5.3 degrees over 2.30 m, while `map -> base` closed to 0.374 m /
+9.3 degrees. The remaining position correction is a short-course accuracy
+risk, but no longer constitutes the large map breakage seen before tuning.
+The matching Operator control bag MCAP is `6ba31e3b...26b5` and its metadata is
+`9353591c...90f4`.
+
+USB reconnect testing exposed a Linux device-lifetime issue: the stable by-id
+link returned to event9, but the already-running container retained the old
+event handle. Its Joy publisher eventually stopped and teleop correctly timed
+out. Recreating the Operator container, pressing PS, and verifying live axes
+restored operation. The runbook now makes container recreation mandatory after
+every USB reconnect.
 
 ## Remaining acceptance work
 

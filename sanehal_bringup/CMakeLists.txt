@@ -9,6 +9,7 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(launch_testing_ament_cmake REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
@@ -16,6 +17,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
   add_launch_test(test/test_pointcloud_to_laserscan.py TIMEOUT 30)
   add_launch_test(test/test_robot_bringup.py TIMEOUT 45)
+  ament_add_pytest_test(repository_contract test/test_repository_contract.py)
 endif()
 
 ament_auto_package(

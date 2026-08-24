@@ -1,4 +1,4 @@
-# sanehal_behicle_description
+# sanehal_vehicle_description
 
 ## SANEHAL-2 JT16 frame
 
@@ -83,16 +83,12 @@ ros2 topic pub --once /sanehal_base_controller/cmd_vel geometry_msgs/msg/TwistSt
 
 ## 構造
 
-```urdf :mermaid
+```mermaid
 flowchart LR
-    main[diffbot.urdf.xacro]
-    description(diffbot_description.urdf.xacro)
-    materials(diffbot.materials.xacro)
-    ros2_control(diffbot.ros2_control.xacro)
-    gazebo(gazeobo/diffbot.gazebo.xacro)
-    gazebo_materials(gazebo/diffbot.materials.xacro)
+    main[sanehal.urdf.xacro]
+    description(sanehal.xacro)
+    ros2_control(sanehal.ros2_control.xacro)
 
     main---ros2_control
     main---description
-    main---materials
 ```
